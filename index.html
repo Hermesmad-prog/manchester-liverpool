@@ -48,31 +48,87 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg); color: var(--text);
-    font-size: 14px; line-height: 1.55;
+    font-size: 16px; line-height: 1.6;
   }
 
   /* ─── HEADER ─── */
   .app-header {
     background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
-    color: #fff; text-align: center; padding: 20px 16px 14px;
+    color: #fff; text-align: center; padding: 18px 16px 14px;
+    position: relative;
   }
-  .app-header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
-  .app-header p  { font-size: 12px; opacity: .8; margin-top: 3px; }
+  .app-header h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.3px; }
+  .app-header p  { font-size: 14px; opacity: .8; margin-top: 3px; }
   .flight-bar {
     display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
     margin-top: 12px;
   }
   .flight-pill {
     background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
-    border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 600;
+    border-radius: 20px; padding: 6px 13px; font-size: 12px; font-weight: 600;
   }
 
-  /* ─── TABS ─── */
-  .tabs-wrap {
-    position: sticky; top: 0; z-index: 100;
-    background: #fff; border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  /* ─── HAMBURGER BUTTON ─── */
+  .hamburger {
+    position: absolute; top: 16px; left: 14px;
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+    color: #fff; font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
   }
+  /* current day label shown next to hamburger */
+  .current-tab-label {
+    position: absolute; top: 16px; right: 14px;
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+    border-radius: 12px; padding: 0 14px; height: 44px;
+    display: flex; align-items: center; color: #fff;
+    font-size: 13px; font-weight: 700; max-width: 55%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ─── SIDE DRAWER ─── */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    z-index: 998; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 82%;
+    background: var(--card); z-index: 999;
+    transform: translateX(-100%); transition: transform .28s ease;
+    box-shadow: 2px 0 20px rgba(0,0,0,.25);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff; padding: 22px 20px 18px;
+  }
+  .drawer-head h3 { font-size: 19px; font-weight: 800; }
+  .drawer-head p  { font-size: 13px; opacity: .8; margin-top: 2px; }
+  .drawer-nav { padding: 10px 0; }
+  .drawer-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 20px; font-size: 16px; font-weight: 700;
+    color: var(--text); cursor: pointer; border: none; background: none;
+    width: 100%; text-align: left; border-left: 4px solid transparent;
+  }
+  .drawer-item:hover { background: var(--card-alt); }
+  .drawer-item.active { border-left-color: var(--di-color); color: var(--di-color); background: var(--card-alt); }
+  .drawer-item .di-icon { font-size: 22px; width: 28px; text-align: center; }
+  .drawer-item[data-tab="jueves"]   { --di-color: var(--blue); }
+  .drawer-item[data-tab="viernes"]  { --di-color: var(--green); }
+  .drawer-item[data-tab="sabado"]   { --di-color: var(--amber); }
+  .drawer-item[data-tab="domingo"]  { --di-color: var(--pink); }
+  .drawer-item[data-tab="lunes"]    { --di-color: var(--indigo); }
+  .drawer-item[data-tab="pubs"]     { --di-color: var(--purple); }
+  .drawer-item[data-tab="cambio"]   { --di-color: #0369a1; }
+  .drawer-item[data-tab="cercami"]  { --di-color: #059669; }
+  .drawer-item[data-tab="util"]     { --di-color: #0891b2; }
+
+  /* ─── TABS (legacy, hidden now) ─── */
+  .tabs-wrap { display: none; }
   .tabs {
     display: flex; overflow-x: auto; gap: 0;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
@@ -100,7 +156,7 @@
   .tab-panel.active { display: block; }
 
   .day-heading {
-    font-size: 15px; font-weight: 800; margin-bottom: 14px;
+    font-size: 18px; font-weight: 800; margin-bottom: 14px;
     padding-bottom: 8px; border-bottom: 3px solid var(--day-color);
     color: var(--day-color);
   }
@@ -145,10 +201,10 @@
   }
   .place-body { padding: 13px 14px 14px; }
   .place-top  { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
-  .place-name { font-size: 15px; font-weight: 800; flex: 1; }
+  .place-name { font-size: 17px; font-weight: 800; flex: 1; }
   .badge {
-    flex-shrink: 0; display: inline-block; padding: 3px 8px;
-    font-size: 9px; font-weight: 800; border-radius: 6px;
+    flex-shrink: 0; display: inline-block; padding: 4px 9px;
+    font-size: 11px; font-weight: 800; border-radius: 6px;
     color: #fff; text-transform: uppercase; letter-spacing: .3px;
     margin-top: 2px;
   }
@@ -162,17 +218,17 @@
   .b-free   { background: #059669; }
   .b-lego   { background: #dc2626; }
 
-  .place-desc { font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 10px; }
+  .place-desc { font-size: 15px; color: #374151; line-height: 1.6; margin-bottom: 10px; }
   .place-entry {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    font-size: 13px; font-weight: 700; padding: 4px 10px;
     border-radius: 20px; margin-bottom: 8px;
   }
   .entry-free  { background: #dcfce7; color: #15803d; }
   .entry-paid  { background: #fef9c3; color: #854d0e; }
   .entry-mixed { background: #e0f2fe; color: #0369a1; }
   .place-tip  {
-    font-size: 11px; background: #f0fdf4; border-left: 3px solid #16a34a;
+    font-size: 13px; background: #f0fdf4; border-left: 3px solid #16a34a;
     padding: 6px 10px; border-radius: 0 6px 6px 0; color: #15803d;
     margin-bottom: 10px; font-weight: 500;
   }
@@ -180,13 +236,13 @@
   .btn-maps {
     display: inline-flex; align-items: center; gap: 5px;
     background: var(--blue); color: #fff; border-radius: 8px;
-    padding: 8px 13px; font-size: 12px; font-weight: 700;
+    padding: 10px 15px; font-size: 14px; font-weight: 700;
     text-decoration: none;
   }
   .btn-info {
     display: inline-flex; align-items: center; gap: 5px;
     background: #f1f5f9; color: #475569; border-radius: 8px;
-    padding: 8px 13px; font-size: 12px; font-weight: 700;
+    padding: 10px 15px; font-size: 14px; font-weight: 700;
     text-decoration: none; border: 1px solid var(--border);
   }
 
@@ -197,9 +253,9 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.07);
   }
   .food-header {
-    padding: 12px 14px; background: #f8fafc;
+    padding: 13px 15px; background: #f8fafc;
     border-bottom: 1px solid var(--border);
-    font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 8px;
   }
   .food-list { padding: 8px 0; }
   .food-item {
@@ -207,10 +263,10 @@
     padding: 10px 14px; border-bottom: 1px solid #f8fafc;
   }
   .food-item:last-child { border-bottom: none; }
-  .food-emoji { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .food-emoji { font-size: 26px; flex-shrink: 0; margin-top: 1px; }
   .food-info { flex: 1; }
-  .food-name { font-weight: 700; font-size: 13px; }
-  .food-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .food-name { font-weight: 700; font-size: 15px; }
+  .food-desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
   .food-tag  {
     display: inline-block; padding: 1px 6px; border-radius: 4px;
     font-size: 10px; font-weight: 700; margin-right: 4px; margin-top: 3px;
@@ -222,13 +278,13 @@
   .ft-kebab   { background:#ecfccb; color:#3f6212; }
   .ft-brunch  { background:#fbcfe8; color:#9d174d; }
   .ft-british { background:#e0e7ff; color:#3730a3; }
-  .food-link  { font-size: 11px; color: var(--blue); font-weight: 700; text-decoration: none; }
+  .food-link  { font-size: 13px; color: var(--blue); font-weight: 700; text-decoration: none; }
 
   /* ─── INFO BOX ─── */
   .info-card {
     background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border: 1px solid #bfdbfe; border-radius: 12px;
-    padding: 12px 14px; margin-bottom: 14px; font-size: 12px;
+    padding: 13px 15px; margin-bottom: 14px; font-size: 14px;
   }
   .info-card p { margin-top: 4px; }
   .info-card strong { color: #1d4ed8; }
@@ -243,7 +299,7 @@
   .pub-img      { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
   .pub-body     { padding: 12px 14px; }
   .pub-top      { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-  .pub-name     { font-size: 15px; font-weight: 800; }
+  .pub-name     { font-size: 18px; font-weight: 800; }
   .pub-star     { color: #eab308; font-size: 14px; }
   .pub-tags     { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
   .pub-tag      { background: #f3e8ff; color: #6b21a8; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; }
@@ -254,10 +310,10 @@
   }
   .pub-rating b { color: #b45309; }
   .pub-rating small { color: #9ca3af; font-size: 10px; }
-  .pub-desc     { font-size: 12px; color: #374151; margin-bottom: 8px; }
+  .pub-desc     { font-size: 14px; color: #374151; margin-bottom: 8px; }
   .pub-meta     { display: flex; justify-content: space-between; align-items: center; }
-  .pub-hours    { font-size: 11px; color: var(--muted); font-weight: 600; }
-  .pub-addr     { font-size: 11px; color: var(--muted); }
+  .pub-hours    { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .pub-addr     { font-size: 13px; color: var(--muted); }
 
   /* ─── TRANSPORT ─── */
   .transport-card {
@@ -267,8 +323,8 @@
   }
   .transport-icon { font-size: 26px; }
   .transport-info { flex: 1; }
-  .transport-title{ font-weight: 800; font-size: 14px; }
-  .transport-sub  { font-size: 12px; opacity: .8; margin-top: 2px; }
+  .transport-title{ font-weight: 800; font-size: 16px; }
+  .transport-sub  { font-size: 14px; opacity: .8; margin-top: 2px; }
   .transport-link { color: #93c5fd; font-weight: 700; font-size: 12px; text-decoration: none; }
 
   /* ─── CONCERT CARD ─── */
@@ -294,7 +350,7 @@
 
   /* ─── SECTION DIVIDER ─── */
   .section-label {
-    font-size: 10px; font-weight: 800; color: var(--muted);
+    font-size: 12px; font-weight: 800; color: var(--muted);
     text-transform: uppercase; letter-spacing: 1px;
     margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
   }
@@ -375,12 +431,34 @@
   }
 })();
 </script>
+  <button class="hamburger" onclick="openDrawer()">☰</button>
+  <div class="current-tab-label" id="current-tab-label">Jue 3 Sep</div>
   <h1>🇬🇧 Mánchester & Liverpool</h1>
   <p>Guía completa · 3 – 7 Septiembre 2026</p>
   <div class="flight-bar">
     <div class="flight-pill">✈️ Ida: RK3186 · 11:25 MAD → 13:00 MAN</div>
     <div class="flight-pill">✈️ Vuelta: FR3187 · 14:30 MAN → 18:05 MAD</div>
     <div class="flight-pill">🏨 The Gardens Hotel · 55 Piccadilly</div>
+  </div>
+</div>
+
+<!-- ── SIDE DRAWER ── -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>🇬🇧 Mánchester & Liverpool</h3>
+    <p>3 – 7 Septiembre 2026</p>
+  </div>
+  <div class="drawer-nav">
+    <button class="drawer-item active" data-tab="jueves"  onclick="navTo('jueves',this)"><span class="di-icon">📅</span> Jueves 3 Sep</button>
+    <button class="drawer-item"        data-tab="viernes" onclick="navTo('viernes',this)"><span class="di-icon">📅</span> Viernes 4 Sep · Liverpool</button>
+    <button class="drawer-item"        data-tab="sabado"  onclick="navTo('sabado',this)"><span class="di-icon">📅</span> Sábado 5 Sep</button>
+    <button class="drawer-item"        data-tab="domingo" onclick="navTo('domingo',this)"><span class="di-icon">📅</span> Domingo 6 Sep · Concierto</button>
+    <button class="drawer-item"        data-tab="lunes"   onclick="navTo('lunes',this)"><span class="di-icon">📅</span> Lunes 7 Sep · Vuelta</button>
+    <button class="drawer-item"        data-tab="pubs"    onclick="navTo('pubs',this)"><span class="di-icon">🍺</span> Pubs LGTBIQ+</button>
+    <button class="drawer-item"        data-tab="cercami" onclick="navTo('cercami',this);initNearMe()"><span class="di-icon">📍</span> Cerca de mí</button>
+    <button class="drawer-item"        data-tab="cambio"  onclick="navTo('cambio',this)"><span class="di-icon">💱</span> Cambio £ → €</button>
+    <button class="drawer-item"        data-tab="util"    onclick="navTo('util',this)"><span class="di-icon">ℹ️</span> Información Útil</button>
   </div>
 </div>
 
@@ -403,6 +481,7 @@
 ══════════════════════════════════ -->
 <div id="jueves" class="tab-panel active">
   <h2 class="day-heading">Jueves 3 Sep · Llegada & Primer Paseo por Mánchester</h2>
+  <div class="day-weather" data-wdate="2026-09-03" data-wcity="man" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:12px;padding:12px 15px;margin-bottom:14px;color:#fff;"><div style="font-size:32px;" class="dw-icon">🌡️</div><div style="flex:1;"><div style="font-weight:800;font-size:15px;" class="dw-city">📍 Mánchester</div><div style="font-size:13px;opacity:.85;" class="dw-detail">Cargando tiempo...</div></div></div>
 
   <div class="transport-card">
     <div class="transport-icon">✈️</div>
@@ -619,6 +698,7 @@
 
 <div id="viernes" class="tab-panel">
   <h2 class="day-heading">Viernes 4 Sep · Excursión a Liverpool & The Beatles</h2>
+  <div class="day-weather" data-wdate="2026-09-04" data-wcity="liv" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:12px;padding:12px 15px;margin-bottom:14px;color:#fff;"><div style="font-size:32px;" class="dw-icon">🌡️</div><div style="flex:1;"><div style="font-weight:800;font-size:15px;" class="dw-city">📍 Liverpool</div><div style="font-size:13px;opacity:.85;" class="dw-detail">Cargando tiempo...</div></div></div>
 
   <div class="transport-card">
     <div class="transport-icon">🚆</div>
@@ -690,7 +770,7 @@
 
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="The_Beatles_Story" data-emoji="🎸" src="" alt="The Beatles Story">
+      <img class="place-img" data-wiki="The_Beatles_Story" data-commons="Beatles Story Albert Dock Liverpool" data-emoji="🎸" src="" alt="The Beatles Story">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -825,7 +905,7 @@
   <div class="section-label">🧱 15:30 · LEGO Store Liverpool</div>
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="Liverpool_One" data-emoji="🧱" src="" alt="Liverpool ONE">
+      <img class="place-img" data-wiki="Liverpool_One" data-commons="Liverpool ONE shopping" data-emoji="🧱" src="" alt="Liverpool ONE">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -920,6 +1000,7 @@
 
 <div id="sabado" class="tab-panel">
   <h2 class="day-heading">Sábado 5 Sep · Alan Turing, Ciencia, Castlefield & Cultura</h2>
+  <div class="day-weather" data-wdate="2026-09-05" data-wcity="man" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:12px;padding:12px 15px;margin-bottom:14px;color:#fff;"><div style="font-size:32px;" class="dw-icon">🌡️</div><div style="flex:1;"><div style="font-weight:800;font-size:15px;" class="dw-city">📍 Mánchester</div><div style="font-size:13px;opacity:.85;" class="dw-detail">Cargando tiempo...</div></div></div>
 
   <div class="section-label">💻 10:00 · Alan Turing & Campus</div>
 
@@ -982,7 +1063,7 @@
 
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="Whitworth_Art_Gallery" data-emoji="🎨" src="" alt="Whitworth Art Gallery">
+      <img class="place-img" data-wiki="Whitworth_Art_Gallery" data-commons="Whitworth Art Gallery Manchester" data-emoji="🎨" src="" alt="Whitworth Art Gallery">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -1099,7 +1180,7 @@
 
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="People's_History_Museum" data-emoji="✊" src="" alt="People's History Museum">
+      <img class="place-img" data-wiki="People's_History_Museum" data-commons="Peoples History Museum Manchester" data-emoji="✊" src="" alt="People's History Museum">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -1184,6 +1265,7 @@
 
 <div id="domingo" class="tab-panel">
   <h2 class="day-heading">Domingo 6 Sep · Arte, Ancoats, New Islington & Concierto KATSEYE</h2>
+  <div class="day-weather" data-wdate="2026-09-06" data-wcity="man" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:12px;padding:12px 15px;margin-bottom:14px;color:#fff;"><div style="font-size:32px;" class="dw-icon">🌡️</div><div style="flex:1;"><div style="font-weight:800;font-size:15px;" class="dw-city">📍 Mánchester</div><div style="font-size:13px;opacity:.85;" class="dw-detail">Cargando tiempo...</div></div></div>
 
   <div class="section-label">🎨 10:30 · Arte y Canales</div>
 
@@ -1291,7 +1373,7 @@
 
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="Ancoats" data-emoji="🏭" src="" alt="Ancoats Manchester">
+      <img class="place-img" data-wiki="Ancoats" data-commons="Ancoats Manchester canal" data-emoji="🏭" src="" alt="Ancoats Manchester">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -1309,7 +1391,7 @@
 
   <div class="place-card">
     <div class="place-img-wrap">
-      <img class="place-img" data-wiki="Mackie_Mayor" data-emoji="🍺" src="" alt="Mackie Mayor Manchester">
+      <img class="place-img" data-wiki="Mackie_Mayor" data-commons="Mackie Mayor Manchester" data-emoji="🍺" src="" alt="Mackie Mayor Manchester">
     </div>
     <div class="place-body">
       <div class="place-top">
@@ -1432,6 +1514,7 @@
 
 <div id="lunes" class="tab-panel">
   <h2 class="day-heading">Lunes 7 Sep · Brunch, Check-out & Vuelo a Casa</h2>
+  <div class="day-weather" data-wdate="2026-09-07" data-wcity="man" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:12px;padding:12px 15px;margin-bottom:14px;color:#fff;"><div style="font-size:32px;" class="dw-icon">🌡️</div><div style="flex:1;"><div style="font-weight:800;font-size:15px;" class="dw-city">📍 Mánchester</div><div style="font-size:13px;opacity:.85;" class="dw-detail">Cargando tiempo...</div></div></div>
 
   <div class="info-card">
     <strong>⏰ Horarios clave del día:</strong>
@@ -1502,7 +1585,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="The_Churchill,_Manchester" data-emoji="🏳️‍🌈" src="" alt="Canal Street, Manchester">
+      <img class="pub-img" data-wiki="The_Churchill,_Manchester" data-commons="Canal Street Manchester" data-emoji="🏳️‍🌈" src="" alt="Canal Street, Manchester">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">The Church</div>
@@ -1520,7 +1603,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-emoji="🍺" src="" alt="Via Manchester">
+      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-commons="Canal Street Manchester" data-emoji="🍺" src="" alt="Via Manchester">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">Via Manchester</div>
@@ -1538,7 +1621,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="G-A-Y" data-emoji="🎵" src="" alt="G-A-Y Manchester">
+      <img class="pub-img" data-wiki="G-A-Y" data-commons="Canal Street Manchester gay village" data-emoji="🎵" src="" alt="G-A-Y Manchester">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">G-A-Y Manchester</div>
@@ -1556,7 +1639,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="Cruz_101" data-emoji="🎉" src="" alt="New York New York">
+      <img class="pub-img" data-wiki="Cruz_101" data-commons="Princess Street Manchester" data-emoji="🎉" src="" alt="New York New York">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">New York New York</div>
@@ -1574,7 +1657,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="Sackville_Gardens" data-emoji="🍺" src="" alt="Thompson Arms">
+      <img class="pub-img" data-wiki="Sackville_Gardens" data-commons="Sackville Gardens Manchester" data-emoji="🍺" src="" alt="Thompson Arms">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">Thompson Arms</div>
@@ -1592,7 +1675,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="The_Rembrandt_Hotel,_Manchester" data-emoji="🐻" src="" alt="The Rembrandt (RemBar)">
+      <img class="pub-img" data-wiki="The_Rembrandt_Hotel,_Manchester" data-commons="Sackville Street Manchester gay village" data-emoji="🐻" src="" alt="The Rembrandt (RemBar)">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">The Rembrandt (RemBar)</div>
@@ -1610,7 +1693,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-emoji="🦅" src="" alt="The Eagle Manchester">
+      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-commons="Canal Street Manchester" data-emoji="🦅" src="" alt="The Eagle Manchester">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">The Eagle Manchester</div>
@@ -1628,7 +1711,7 @@
 
   <div class="pub-card">
     <div class="pub-img-wrap">
-      <img class="pub-img" data-wiki="Cruz_101" data-emoji="🪩" src="" alt="Cruz 101">
+      <img class="pub-img" data-wiki="Cruz_101" data-commons="Princess Street Manchester" data-emoji="🪩" src="" alt="Cruz 101">
     </div>
     <div class="pub-body">
       <div class="pub-top"><div class="pub-name">Cruz 101</div>
@@ -2038,48 +2121,161 @@ window.resetChecklist = resetChecklist;
 // Init all on load
 window.addEventListener('load', function() {
   loadWeather();
+  loadDayWeather();
   renderPhrases();
   renderChecklist();
 });
-</script>
 
-<script>
-function openTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+// ── CLIMA POR DÍA (en cada pestaña) ──
+function loadDayWeather() {
+  var strips = document.querySelectorAll('.day-weather');
+  var wmoIcons = {
+    0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',
+    51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',
+    71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'
+  };
+  var wmoText = {
+    0:'Despejado',1:'Casi despejado',2:'Parcialmente nublado',3:'Nublado',
+    45:'Niebla',48:'Niebla',51:'Llovizna ligera',53:'Llovizna',55:'Llovizna intensa',
+    61:'Lluvia ligera',63:'Lluvia',65:'Lluvia fuerte',80:'Chubascos',81:'Chubascos',82:'Chubascos fuertes',95:'Tormenta'
+  };
+  var coords = { man:{lat:53.48,lng:-2.24}, liv:{lat:53.41,lng:-2.98} };
+
+  strips.forEach(function(strip) {
+    var date = strip.dataset.wdate;
+    var city = strip.dataset.wcity;
+    var c = coords[city];
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lng+
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'+
+      '&timezone=Europe/London&start_date='+date+'&end_date='+date;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.timeout = 8000;
+    xhr.onload = function() {
+      if (xhr.status !== 200) { failDay(strip); return; }
+      try {
+        var d = JSON.parse(xhr.responseText);
+        var code = d.daily.weather_code[0];
+        var max = Math.round(d.daily.temperature_2m_max[0]);
+        var min = Math.round(d.daily.temperature_2m_min[0]);
+        var rain = d.daily.precipitation_probability_max[0];
+        strip.querySelector('.dw-icon').textContent = wmoIcons[code] || '🌡️';
+        strip.querySelector('.dw-detail').innerHTML =
+          '<b>' + max + '°</b> / ' + min + '° · ' + (wmoText[code]||'') + ' · 💧 ' + rain + '% lluvia';
+      } catch(e) { failDay(strip); }
+    };
+    xhr.onerror = function(){ failDay(strip); };
+    xhr.ontimeout = function(){ failDay(strip); };
+    xhr.send();
+  });
+}
+function failDay(strip) {
+  var el = strip.querySelector('.dw-detail');
+  if (el) el.textContent = 'Tiempo no disponible sin conexión';
 }
 </script>
 
 <script>
-async function loadWikiImages() {
-  const imgs = document.querySelectorAll('img[data-wiki]');
-  const load = async (img) => {
-    const title = img.dataset.wiki;
-    try {
-      const url = 'https://en.wikipedia.org/w/api.php?action=query&titles='
-        + encodeURIComponent(title)
-        + '&prop=pageimages&format=json&pithumbsize=800&origin=*';
-      const res = await fetch(url);
-      const data = await res.json();
-      const pages = data.query.pages;
-      const page = pages[Object.keys(pages)[0]];
+var tabLabels = {
+  jueves:'Jue 3 Sep', viernes:'Vie 4 Sep · Liverpool', sabado:'Sáb 5 Sep',
+  domingo:'Dom 6 Sep', lunes:'Lun 7 Sep', pubs:'Pubs LGTBIQ+',
+  cambio:'Cambio £→€', cercami:'Cerca de mí', util:'Info Útil'
+};
+
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+function navTo(id, item) {
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  // sync drawer highlight
+  document.querySelectorAll('.drawer-item').forEach(function(d){ d.classList.remove('active'); });
+  if (item) item.classList.add('active');
+  // sync hidden tab-btns (for legacy calls)
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === id);
+  });
+  // update header label
+  var lbl = document.getElementById('current-tab-label');
+  if (lbl) lbl.textContent = tabLabels[id] || '';
+  closeDrawer();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Legacy openTab (used by internal links) → route through navTo
+function openTab(id, btn) {
+  var item = document.querySelector('.drawer-item[data-tab="'+id+'"]');
+  navTo(id, item);
+}
+</script>
+
+<script>
+function loadWikiImages() {
+  var imgs = document.querySelectorAll('img[data-wiki]');
+
+  function showEmoji(img) {
+    var wrap = img.closest('.place-img-wrap, .pub-img-wrap');
+    if (wrap) {
+      wrap.innerHTML =
+        '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#e2e8f0;">' +
+        (img.dataset.emoji || '📍') + '</div>';
+    }
+  }
+
+  function tryWikipedia(img, done) {
+    var title = img.dataset.wiki;
+    var url = 'https://en.wikipedia.org/w/api.php?action=query&titles='
+      + encodeURIComponent(title)
+      + '&prop=pageimages&format=json&pithumbsize=800&origin=*';
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      var pages = data.query.pages;
+      var page = pages[Object.keys(pages)[0]];
       if (page && page.thumbnail && page.thumbnail.source) {
         img.src = page.thumbnail.source;
         img.style.opacity = '1';
+        done(true);
       } else {
-        img.closest('.place-img-wrap, .pub-img-wrap').innerHTML =
-          '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#e2e8f0;">' +
-          (img.dataset.emoji || '📍') + '</div>';
+        done(false);
       }
-    } catch(e) {
-      console.warn('Wiki img failed:', title, e);
-    }
-  };
-  // Load all in parallel
-  await Promise.all([...imgs].map(load));
+    }).catch(function(){ done(false); });
+  }
+
+  function tryCommons(img, done) {
+    // Search Wikimedia Commons for an image file matching the search term
+    var term = img.dataset.commons || img.dataset.wiki.replace(/_/g, ' ');
+    var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search'
+      + '&gsrsearch=' + encodeURIComponent('filetype:bitmap ' + term)
+      + '&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=800'
+      + '&format=json&origin=*';
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      if (data.query && data.query.pages) {
+        var pages = data.query.pages;
+        var page = pages[Object.keys(pages)[0]];
+        if (page && page.imageinfo && page.imageinfo[0] && page.imageinfo[0].thumburl) {
+          img.src = page.imageinfo[0].thumburl;
+          img.style.opacity = '1';
+          done(true);
+          return;
+        }
+      }
+      done(false);
+    }).catch(function(){ done(false); });
+  }
+
+  imgs.forEach(function(img) {
+    tryWikipedia(img, function(ok) {
+      if (ok) return;
+      tryCommons(img, function(ok2) {
+        if (!ok2) showEmoji(img);
+      });
+    });
+  });
 }
 window.addEventListener('load', loadWikiImages);
 </script>
