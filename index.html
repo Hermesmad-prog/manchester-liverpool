@@ -53,7 +53,7 @@
 
   /* ─── HEADER ─── */
   .app-header {
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 55%, #6366f1 100%);
     color: #fff; text-align: center; padding: 14px 16px 14px;
     position: relative;
   }
@@ -62,30 +62,34 @@
     margin-bottom: 12px;
   }
   .app-header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; }
-  .app-header p  { font-size: 14px; opacity: .8; margin-top: 3px; }
+  .app-header p  { font-size: 14px; opacity: .85; margin-top: 3px; }
   .flight-bar {
     display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
     margin-top: 12px;
   }
   .flight-pill {
-    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
-    border-radius: 20px; padding: 6px 13px; font-size: 12px; font-weight: 600;
+    background: rgba(255,255,255,.95); border: 1px solid rgba(255,255,255,.6);
+    border-radius: 20px; padding: 6px 13px; font-size: 12px; font-weight: 700;
+    color: #312e81;
   }
 
   /* ─── HAMBURGER BUTTON ─── */
   .hamburger {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
-    color: #fff; font-size: 22px; cursor: pointer;
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: #fbbf24; border: none;
+    color: #312e81; font-size: 22px; cursor: pointer; font-weight: 900;
     display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(251,191,36,.4);
   }
+  .hamburger:active { transform: scale(.94); }
   /* current day label shown next to hamburger */
   .current-tab-label {
-    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
-    border-radius: 12px; padding: 0 14px; height: 44px;
-    display: flex; align-items: center; color: #fff;
-    font-size: 13px; font-weight: 700; max-width: 60%;
+    background: #fbbf24; border: none;
+    border-radius: 12px; padding: 0 16px; height: 46px;
+    display: flex; align-items: center; color: #312e81;
+    font-size: 14px; font-weight: 800; max-width: 60%;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    box-shadow: 0 2px 8px rgba(251,191,36,.4);
   }
 
   /* ─── SIDE DRAWER ─── */
@@ -103,11 +107,12 @@
   }
   .drawer.open { transform: translateX(0); }
   .drawer-head {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: linear-gradient(135deg, #312e81, #4338ca);
     color: #fff; padding: 22px 20px 18px;
+    border-bottom: 3px solid #fbbf24;
   }
   .drawer-head h3 { font-size: 19px; font-weight: 800; }
-  .drawer-head p  { font-size: 13px; opacity: .8; margin-top: 2px; }
+  .drawer-head p  { font-size: 13px; opacity: .85; margin-top: 2px; color: #fef3c7; }
   .drawer-nav { padding: 10px 0; }
   .drawer-item {
     display: flex; align-items: center; gap: 14px;
@@ -2462,7 +2467,7 @@ function initNearMe() {
 </script>
 
 <div style="text-align:center;padding:20px 16px 30px;color:var(--muted);font-size:12px;">
-  Guía Mánchester &amp; Liverpool · v5.2
+  Guía Mánchester &amp; Liverpool · v5.6
 </div>
 
 </body>
