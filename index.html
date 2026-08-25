@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mánchester & Liverpool – Sep 2026</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --blue: #2563eb;
+    --green: #059669;
+    --amber: #d97706;
+    --pink: #db2777;
+    --indigo: #4f46e5;
+    --purple: #9333ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 14px; line-height: 1.55;
+  }
+
+  /* ─── HEADER ─── */
+  .app-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+    color: #fff; text-align: center; padding: 20px 16px 14px;
+  }
+  .app-header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+  .app-header p  { font-size: 12px; opacity: .8; margin-top: 3px; }
+  .flight-bar {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .flight-pill {
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+    border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 600;
+  }
+
+  /* ─── TABS ─── */
+  .tabs-wrap {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .tabs {
+    display: flex; overflow-x: auto; gap: 0;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; border: none; background: transparent;
+    padding: 13px 16px; font-size: 12px; font-weight: 700; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent;
+    transition: all .2s; white-space: nowrap;
+  }
+  .tab-btn.active { color: var(--active-color); border-bottom-color: var(--active-color); }
+  [data-tab="jueves"]   { --active-color: var(--blue); }
+  [data-tab="viernes"]  { --active-color: var(--green); }
+  [data-tab="sabado"]   { --active-color: var(--amber); }
+  [data-tab="domingo"]  { --active-color: var(--pink); }
+  [data-tab="lunes"]    { --active-color: var(--indigo); }
+  [data-tab="pubs"]     { --active-color: var(--purple); }
+  [data-tab="cambio"]   { --active-color: #0369a1; }
+  [data-tab="cercami"]  { --active-color: #059669; }
+
+  /* ─── TAB PANELS ─── */
+  .tab-panel { display: none; padding: 14px 12px 40px; }
+  .tab-panel.active { display: block; }
+
+  .day-heading {
+    font-size: 15px; font-weight: 800; margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 3px solid var(--day-color);
+    color: var(--day-color);
+  }
+  #jueves  { --day-color: var(--blue); }
+  #viernes { --day-color: var(--green); }
+  #sabado  { --day-color: var(--amber); }
+  #domingo { --day-color: var(--pink); }
+  #lunes   { --day-color: var(--indigo); }
+  #pubs    { --day-color: var(--purple); }
+
+  /* ─── TIME BLOCK ─── */
+  .time-block { margin-bottom: 6px; }
+  .time-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .4px;
+    margin-bottom: 8px;
+  }
+  .time-label::before {
+    content: ''; display: block; width: 3px; height: 14px;
+    background: var(--day-color); border-radius: 2px;
+  }
+
+  /* ─── PLACE CARD ─── */
+  .place-card {
+    background: var(--card); border-radius: 14px;
+    overflow: hidden; margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid var(--border);
+  }
+  .place-img-wrap {
+    position: relative; width: 100%; height: 180px; overflow: hidden;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  }
+  .place-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .3s; opacity: 0; transition: opacity .4s, transform .3s;
+  }
+  .place-img-wrap:hover .place-img { transform: scale(1.03); }
+  .img-placeholder {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 42px; background: #e2e8f0;
+  }
+  .place-body { padding: 13px 14px 14px; }
+  .place-top  { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+  .place-name { font-size: 15px; font-weight: 800; flex: 1; }
+  .badge {
+    flex-shrink: 0; display: inline-block; padding: 3px 8px;
+    font-size: 9px; font-weight: 800; border-radius: 6px;
+    color: #fff; text-transform: uppercase; letter-spacing: .3px;
+    margin-top: 2px;
+  }
+  .b-must   { background: #dc2626; }
+  .b-culture{ background: #7c3aed; }
+  .b-shop   { background: #0891b2; }
+  .b-nature { background: #16a34a; }
+  .b-music  { background: #db2777; }
+  .b-lgbtq  { background: #9333ea; }
+  .b-history{ background: #b45309; }
+  .b-free   { background: #059669; }
+  .b-lego   { background: #dc2626; }
+
+  .place-desc { font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 10px; }
+  .place-entry {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 20px; margin-bottom: 8px;
+  }
+  .entry-free  { background: #dcfce7; color: #15803d; }
+  .entry-paid  { background: #fef9c3; color: #854d0e; }
+  .entry-mixed { background: #e0f2fe; color: #0369a1; }
+  .place-tip  {
+    font-size: 11px; background: #f0fdf4; border-left: 3px solid #16a34a;
+    padding: 6px 10px; border-radius: 0 6px 6px 0; color: #15803d;
+    margin-bottom: 10px; font-weight: 500;
+  }
+  .place-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-maps {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--blue); color: #fff; border-radius: 8px;
+    padding: 8px 13px; font-size: 12px; font-weight: 700;
+    text-decoration: none;
+  }
+  .btn-info {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f1f5f9; color: #475569; border-radius: 8px;
+    padding: 8px 13px; font-size: 12px; font-weight: 700;
+    text-decoration: none; border: 1px solid var(--border);
+  }
+
+  /* ─── FOOD SECTION ─── */
+  .food-block {
+    background: var(--card); border-radius: 14px; margin-bottom: 14px;
+    border: 1px solid var(--border); overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .food-header {
+    padding: 12px 14px; background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 8px;
+  }
+  .food-list { padding: 8px 0; }
+  .food-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-bottom: 1px solid #f8fafc;
+  }
+  .food-item:last-child { border-bottom: none; }
+  .food-emoji { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .food-info { flex: 1; }
+  .food-name { font-weight: 700; font-size: 13px; }
+  .food-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .food-tag  {
+    display: inline-block; padding: 1px 6px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; margin-right: 4px; margin-top: 3px;
+  }
+  .ft-fish    { background:#fef08a; color:#854d0e; }
+  .ft-pizza   { background:#fca5a5; color:#991b1b; }
+  .ft-burger  { background:#fed7aa; color:#9a3412; }
+  .ft-oriental{ background:#ccfbf1; color:#115e59; }
+  .ft-kebab   { background:#ecfccb; color:#3f6212; }
+  .ft-brunch  { background:#fbcfe8; color:#9d174d; }
+  .ft-british { background:#e0e7ff; color:#3730a3; }
+  .food-link  { font-size: 11px; color: var(--blue); font-weight: 700; text-decoration: none; }
+
+  /* ─── INFO BOX ─── */
+  .info-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 14px; font-size: 12px;
+  }
+  .info-card p { margin-top: 4px; }
+  .info-card strong { color: #1d4ed8; }
+
+  /* ─── PUB CARDS ─── */
+  .pub-card {
+    background: var(--card); border-radius: 14px; margin-bottom: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .pub-img-wrap { height: 140px; overflow: hidden; background: #1e1b4b; }
+  .pub-img      { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
+  .pub-body     { padding: 12px 14px; }
+  .pub-top      { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .pub-name     { font-size: 15px; font-weight: 800; }
+  .pub-star     { color: #eab308; font-size: 14px; }
+  .pub-tags     { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
+  .pub-tag      { background: #f3e8ff; color: #6b21a8; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; }
+
+  .pub-rating {
+    display: block; font-size: 13px; margin-bottom: 6px;
+    color: #92400e;
+  }
+  .pub-rating b { color: #b45309; }
+  .pub-rating small { color: #9ca3af; font-size: 10px; }
+  .pub-desc     { font-size: 12px; color: #374151; margin-bottom: 8px; }
+  .pub-meta     { display: flex; justify-content: space-between; align-items: center; }
+  .pub-hours    { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .pub-addr     { font-size: 11px; color: var(--muted); }
+
+  /* ─── TRANSPORT ─── */
+  .transport-card {
+    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+    color: #fff; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+  }
+  .transport-icon { font-size: 26px; }
+  .transport-info { flex: 1; }
+  .transport-title{ font-weight: 800; font-size: 14px; }
+  .transport-sub  { font-size: 12px; opacity: .8; margin-top: 2px; }
+  .transport-link { color: #93c5fd; font-weight: 700; font-size: 12px; text-decoration: none; }
+
+  /* ─── CONCERT CARD ─── */
+  .concert-card {
+    background: linear-gradient(135deg, #831843, #be185d);
+    color: #fff; border-radius: 14px; padding: 16px 14px;
+    margin-bottom: 14px; text-align: center;
+  }
+  .concert-icon { font-size: 36px; margin-bottom: 6px; }
+  .concert-name { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+  .concert-sub  { font-size: 12px; opacity: .8; margin-top: 4px; }
+  .concert-meta { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
+  .concert-pill { background: rgba(255,255,255,.2); border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; }
+
+  /* ─── MAP BUTTON ─── */
+  .big-map-btn {
+    display: block; text-align: center;
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    color: #fff; font-weight: 800; font-size: 14px;
+    padding: 14px; border-radius: 12px; text-decoration: none;
+    margin-top: 6px; box-shadow: 0 4px 12px rgba(147,51,234,.3);
+  }
+
+  /* ─── SECTION DIVIDER ─── */
+  .section-label {
+    font-size: 10px; font-weight: 800; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>🇬🇧 Mánchester & Liverpool</h1>
+  <p>Guía completa · 3 – 7 Septiembre 2026</p>
+  <div class="flight-bar">
+    <div class="flight-pill">✈️ Ida: RK3186 · 11:25 MAD → 13:00 MAN</div>
+    <div class="flight-pill">✈️ Vuelta: FR3187 · 14:30 MAN → 18:05 MAD</div>
+    <div class="flight-pill">🏨 The Gardens Hotel · 55 Piccadilly</div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="jueves"  onclick="openTab('jueves',this)">🔵 Jue 3 Sep</button>
+    <button class="tab-btn"        data-tab="viernes" onclick="openTab('viernes',this)">🟢 Vie 4 Sep</button>
+    <button class="tab-btn"        data-tab="sabado"  onclick="openTab('sabado',this)">🟡 Sáb 5 Sep</button>
+    <button class="tab-btn"        data-tab="domingo" onclick="openTab('domingo',this)">🩷 Dom 6 Sep</button>
+    <button class="tab-btn"        data-tab="lunes"   onclick="openTab('lunes',this)">🟣 Lun 7 Sep</button>
+    <button class="tab-btn"        data-tab="pubs"    onclick="openTab('pubs',this)">🍺 Pubs LGTBIQ+</button>
+    <button class="tab-btn"        data-tab="cambio"  onclick="openTab('cambio',this)">💱 £ → €</button>
+    <button class="tab-btn"        data-tab="cercami" onclick="openTab('cercami',this);initNearMe()">📍 Cerca de mí</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     JUEVES 3 SEP
+══════════════════════════════════ -->
+<div id="jueves" class="tab-panel active">
+  <h2 class="day-heading">Jueves 3 Sep · Llegada & Primer Paseo por Mánchester</h2>
+
+  <div class="transport-card">
+    <div class="transport-icon">✈️</div>
+    <div class="transport-info">
+      <div class="transport-title">Vuelo RK3186 · 11:25 MAD → 13:00 MAN</div>
+      <div class="transport-sub">Tren al centro: Aeropuerto → Piccadilly Station (~15 min)</div>
+    </div>
+    <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Airport+Station&destination=Manchester+Piccadilly+Station&travelmode=transit" target="_blank" class="transport-link">Ruta →</a>
+  </div>
+
+  <div class="section-label">🍽️ 14:40 · Almuerzo</div>
+  <div class="food-block">
+    <div class="food-header">🍴 Almuerzo tardío — cerca del hotel (2–4 min a pie)</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🍛</div>
+        <div class="food-info">
+          <div class="food-name">Bundobust <span class="food-tag ft-oriental">India Street Food</span></div>
+          <div class="food-desc">Comida india de bazar servida en pequeñas raciones para compartir. Perfecto para picar algo rápido al llegar. Ambiente informal y precios muy razonables.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Bundobust+Piccadilly+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍜</div>
+        <div class="food-info">
+          <div class="food-name">Shoryu Ramen <span class="food-tag ft-oriental">Japonés</span></div>
+          <div class="food-desc">Cadena de ramen artesanal muy popular. Los caldos se preparan durante horas y los toppings son de calidad. Ideal para una comida rápida y contundente.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Shoryu+Ramen+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Franco Manca <span class="food-tag ft-pizza">Pizza Napolitana</span></div>
+          <div class="food-desc">Pizza de masa madre y fermentación lenta, con ingredientes de primera calidad. Una de las mejores pizzas de la ciudad a precio muy justo.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Franco+Manca+Manchester+Piccadilly&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🌶️</div>
+        <div class="food-info">
+          <div class="food-name">My Thai <span class="food-tag ft-oriental">Tailandés</span></div>
+          <div class="food-desc">Restaurante tailandés auténtico a pasos del hotel. Currys, pad thai y sopas con ingredientes frescos. Perfecto si apetece algo especiado después del vuelo.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=My+Thai+Piccadilly+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🧱 16:30 · LEGO & Afflecks</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Lego" data-emoji="🧱" src="" alt="Lego Store">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">LEGO Store · Manchester Arndale</div>
+        <span class="badge b-lego">LEGO</span>
+      </div>
+      <p class="place-desc">Uno de los LEGO Stores más grandes de Reino Unido, situado dentro del centro comercial Arndale. Cuenta con exclusivos de la tienda, sets de edición limitada, y una zona interactiva donde puedes construir y personalizar minifiguras. Siempre hay al menos un set exclusivo de la ciudad que vale la pena llevarse.</p>
+      <span class="place-entry entry-free">✅ Gratis entrar · pagas lo que compras</span>
+      <div class="place-tip">💡 Busca los sets exclusivos de Manchester — la Abeja de Manchester (símbolo de la ciudad) o el obrero de construcción icónico.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Lego" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=LEGO+Store+Manchester+Arndale&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Afflecks" src="" alt="Afflecks">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Afflecks Palace</div>
+        <span class="badge b-shop">Imprescindible</span>
+      </div>
+      <p class="place-desc">El mercado alternativo más famoso del norte de Inglaterra. Cuatro plantas llenas de ropa vintage, discos de vinilo, tatuajes, magia, coleccionables y tiendas independientes de todo tipo. Lleva abierto desde 1982 y es el corazón cultural de la escena alternativa de Mánchester. Cada rincón es diferente al anterior — imposible no encontrar algo que te sorprenda.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 Entrada gratuita. Algunos artistas locales venden su obra directamente aquí.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Afflecks" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Afflecks+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+        <a href="https://afflecks.com" target="_blank" class="btn-info">🌐 Web oficial</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🏛️ 17:30 · Paseo por el Centro Histórico</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Shambles_Square,_Manchester" data-emoji="🍺" src="" alt="Shambles, Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Shambles Square</div>
+        <span class="badge b-history">Historia</span>
+      </div>
+      <p class="place-desc">Una de las plazas más antiguas de Mánchester, con dos pubs medievales que sobrevivieron al Blitz y fueron reubicados aquí piedra a piedra: <strong>The Old Wellington Inn</strong> (1552) y <strong>Sinclair's Oyster Bar</strong> (1745). El contraste de estas estructuras de madera ennegrecida con los edificios modernos que las rodean es absolutamente fascinante. Todo empezó aquí — es el germen del Mánchester histórico.</p>
+      <span class="place-entry entry-free">✅ Gratuito · pubs de pago</span>
+      <div class="place-tip">💡 Entra a tomar una pinta en The Old Wellington, el pub más antiguo de la ciudad. La barra de abajo conserva el suelo original del siglo XVI.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Shambles_Square,_Manchester" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/search/Shambles+Square+Manchester" target="_blank" class="btn-maps">📍 Ver en Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Manchester_Cathedral" src="" alt="Manchester Cathedral">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Catedral de Mánchester</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">Catedral gótica tardía construida en el siglo XV, con una de las naves más anchas de cualquier catedral medieval de Inglaterra. Destaca especialmente su nave con bóveda estrellada, los coros de madera tallada del siglo XV y sus vitrales modernos que narran la historia de la ciudad. Fue gravemente dañada en el Blitz de 1940 y restaurada con gran cuidado.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita (donativo recomendado)</span>
+      <div class="place-tip">💡 La entrada es gratuita. Mira arriba al entrar — las misericordias medievales talladas en los bancos del coro son auténticas obras de arte.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Manchester_Cathedral" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Shambles+Square+Manchester&destination=Manchester+Cathedral&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="The_Printworks_(Manchester)" data-emoji="🎬" src="" alt="Printworks, Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Printworks</div>
+        <span class="badge b-culture">Ocio</span>
+      </div>
+      <p class="place-desc">Antigua imprenta de periódicos reconvertida en uno de los complejos de ocio más grandes de Europa. Su interior conserva la estética industrial original — tuberías vistas, acero y ladrillo rojo — mezclada con bares temáticos, restaurantes, cines IMAX y salas de ocio. El edificio en sí es espectacular: entra aunque sea a mirar el techo.</p>
+      <span class="place-entry entry-free">✅ Gratis entrar · ocio y bares de pago</span>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/The_Printworks_(Manchester)" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Cathedral&destination=Printworks+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Manchester_Central_Library" src="" alt="Manchester Central Library">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Manchester Central Library & St Peter's Square</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">La Biblioteca Central de Mánchester es un edificio circular neoclásico inaugurado en 1934, con una cúpula imponente inspirada en el Panteón de Roma. Su rotonda central cubierta de roble y su sala de lectura en cúpula son de las más bellas del país. Justo delante, la Plaza St Peter's acoge el Cenotafio y es el corazón cívico de la ciudad.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La entrada es libre. La sala de lectura circular del interior es impresionante aunque no busques ningún libro.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Manchester_Central_Library" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Printworks+Manchester&destination=Manchester+Central+Library&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🍷 19:30 · Cena</div>
+  <div class="food-block">
+    <div class="food-header">🌙 Cena de bienvenida — opciones cerca de Canal Street</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🐟</div>
+        <div class="food-info">
+          <div class="food-name">No 1 Canal St <span class="food-tag ft-british">Gastropub</span></div>
+          <div class="food-desc">El gastropub más famoso de Canal Street, justo en el corazón del Gay Village. Buena carta de comida británica y ambiente muy animado. Terrazas frente al canal.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=No+1+Canal+Street+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🥄</div>
+        <div class="food-info">
+          <div class="food-name">The Molly House <span class="food-tag ft-british">Tapas rústicas</span></div>
+          <div class="food-desc">Bar de tapas rústicas muy popular en el Gay Village. Ambiente acogedor, porciones generosas y carta variada. Muy buen punto de partida para la noche.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=The+Molly+House+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Nell's Pizza Kampus <span class="food-tag ft-pizza">Estilo NY</span></div>
+          <div class="food-desc">Pizza estilo Nueva York de porciones gigantes en el barrio Kampus. Masa fina y crujiente, ingredientes frescos. Muy popular entre los locales por las noches.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Nells+Pizza+Kampus+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🫖</div>
+        <div class="food-info">
+          <div class="food-name">Richmond Tea Rooms <span class="food-tag ft-brunch">Temático</span></div>
+          <div class="food-desc">Cafetería temática de inspiración victoriana y arte drag, muy ligada al ambiente LGTBIQ+ de Mánchester. Las tartas y pasteles son espectaculares. Un clásico de la zona.</div>
+          <a href="https://maps.google.com/?q=Richmond+Tea+Rooms+Manchester" target="_blank" class="food-link">📍 Ver en Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🎉 21:00 · Noche en el Gay Village</div>
+  <div class="info-card">
+    <strong>🏳️‍🌈 Canal Street te espera</strong>
+    <p>Primera noche en el Gay Village — la más icónica del norte de Europa. Ve a la pestaña de Pubs para ver la guía completa con horarios y descripciones.</p>
+    <p style="margin-top:8px;"><a href="#" onclick="openTab('pubs', document.querySelectorAll('.tab-btn')[5]); return false;" style="color:#7c3aed;font-weight:800;">👉 Ver Guía de Pubs LGTBIQ+ →</a></p>
+  </div>
+</div>
+
+<div id="viernes" class="tab-panel">
+  <h2 class="day-heading">Viernes 4 Sep · Excursión a Liverpool & The Beatles</h2>
+
+  <div class="transport-card">
+    <div class="transport-icon">🚆</div>
+    <div class="transport-info">
+      <div class="transport-title">Tren Piccadilly → Liverpool Lime Street</div>
+      <div class="transport-sub">09:00 · ~45 min · £10–15 p/p. Compra billete en trainline.com</div>
+    </div>
+    <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Piccadilly+Station&destination=Liverpool+Lime+Street+Station&travelmode=transit" target="_blank" class="transport-link">Ruta →</a>
+  </div>
+
+  <div class="section-label">🌊 10:00 · Waterfront de Liverpool</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Royal_Liver_Building" src="" alt="Royal Liver Building">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">The Three Graces · Waterfront UNESCO</div>
+        <span class="badge b-must">Imprescindible</span>
+      </div>
+      <p class="place-desc">Los tres edificios más icónicos de Liverpool forman uno de los horizontes más reconocibles del mundo: el <strong>Royal Liver Building</strong> (1911), coronado por los míticos Liver Birds de bronce; el <strong>Cunard Building</strong>, antiguo cuartel general de la naviera que operaba el Titanic; y el <strong>Port of Liverpool Building</strong>, con su cúpula barroca. Juntos son Patrimonio Mundial de la UNESCO desde 2004.</p>
+      <span class="place-entry entry-free">✅ Exterior gratuito · visita interior Royal Liver ~£15</span>
+      <div class="place-tip">💡 Los Liver Birds — las dos aves de bronce de 5,5 metros en lo alto del Royal Liver Building — son el símbolo de Liverpool. Según la leyenda, si bajan volando, la ciudad desaparecerá.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Royal_Liver_Building" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Liverpool+Lime+Street+Station&destination=Royal+Liver+Building&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="The_Beatles_statue,_Liverpool" data-emoji="🎸" src="" alt="The Beatles statue, Liverpool">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Estatua de The Beatles en Pier Head</div>
+        <span class="badge b-music">Música</span>
+      </div>
+      <p class="place-desc">Las cuatro figuras de bronce de tamaño real — John, Paul, George y Ringo — caminando en fila junto al Mersey, esculpidas por Andy Edwards e inauguradas en 2015. Es el punto de peregrinación de los fans de The Beatles de todo el mundo. Están situadas exactamente donde los Beatles solían embarcar cuando viajaban a Hamburgo en sus primeros años.</p>
+      <span class="place-entry entry-free">✅ Gratuito</span>
+      <div class="place-tip">💡 La foto clásica es ponerte en medio de los cuatro. Llega temprano para evitar colas de turistas.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/The_Beatles_statue,_Liverpool" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=The+Beatles+Statue+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Royal_Albert_Dock" src="" alt="Royal Albert Dock">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Royal Albert Dock</div>
+        <span class="badge b-must">Imprescindible</span>
+      </div>
+      <p class="place-desc">El complejo de diques victoriano más grande de Reino Unido, inaugurado en 1846 y declarado Patrimonio de la Humanidad. Sus almacenes de ladrillo rojo a orillas del Mersey albergan hoy museos de primer nivel, restaurantes, galerías de arte y bares. Arquitectónicamente es extraordinario: la estructura de hierro fundido y ladrillo sin ninguna madera fue pionera en su época para evitar incendios.</p>
+      <span class="place-entry entry-free">✅ Gratuito · Tate Liverpool y Museo Esclavitud gratis</span>
+      <div class="place-tip">💡 Dentro del Albert Dock están el Museo Internacional de la Esclavitud (gratis, muy impactante) y la sucursal del Tate Liverpool (también gratis).</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Royal_Albert_Dock" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=The+Beatles+Statue+Liverpool&destination=Royal+Albert+Dock+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="The_Beatles_Story" data-emoji="🎸" src="" alt="The Beatles Story">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">The Beatles Story</div>
+        <span class="badge b-music">No te lo pierdas</span>
+      </div>
+      <p class="place-desc">El museo más completo del mundo dedicado enteramente a The Beatles, situado en el mismo Albert Dock. Con réplicas a tamaño real del Cavern Club original y del mítico estudio Abbey Road, instrumentos auténticos, cartas manuscritas de John Lennon, la furgoneta del grupo y una experiencia inmersiva que recorre toda su trayectoria — desde los primeros bolos en Liverpool hasta la ruptura en 1970. Una visita imprescindible si la razón del viaje a Liverpool tiene algo que ver con ellos.</p>
+      <span class="place-entry entry-paid">🎫 ~£17 p/p · Reserva online para evitar cola</span>
+      <div class="place-tip">💡 Reserva la entrada con antelación en su web — en septiembre puede haber espera. El audioguía está incluido en el precio y es muy bueno.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/The_Beatles_Story" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Albert+Dock+Liverpool&destination=The+Beatles+Story+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+        <a href="https://www.beatlesstory.com" target="_blank" class="btn-info">🌐 Web oficial</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Museum_of_Liverpool" src="" alt="Museum of Liverpool">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Museum of Liverpool</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">El mayor museo regional del mundo, inaugurado en 2011 en un edificio de diseño futurista junto al Mersey. Explora la cultura, la música, el deporte y la historia social de Liverpool de manera interactiva. Hay una sección entera dedicada a The Beatles con artículos originales, vídeos y la historia completa de su ascenso desde los clubs de Liverpool al mundo.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La planta de los Beatles tiene la chaqueta original de John Lennon y fotos inéditas de sus primeras actuaciones en el Cavern Club.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Museum_of_Liverpool" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Albert+Dock+Liverpool&destination=Museum+of+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Liverpool_Chinatown" data-emoji="🏮" src="" alt="Liverpool Chinatown">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Barrio Chino de Liverpool</div>
+        <span class="badge b-culture">Cultura</span>
+      </div>
+      <p class="place-desc">El barrio chino más antiguo de Europa, con comunidad establecida desde los años 1830 cuando marineros chinos se asentaron en el puerto. Su imponente <strong>Arco Imperial</strong>, donado por Shanghai en 2000 y con 8 dragones de cerámica tradicional, es uno de los más elaborados fuera de China.</p>
+      <span class="place-entry entry-free">✅ Gratuito</span>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Liverpool_Chinatown" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Museum+of+Liverpool&destination=Chinatown+Arch+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Liverpool_Metropolitan_Cathedral" data-emoji="⛪" src="" alt="Liverpool Metropolitan Cathedral">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Catedral Metropolitana Católica</div>
+        <span class="badge b-must">Única en el mundo</span>
+      </div>
+      <p class="place-desc">Una de las catedrales más originales y visualmente impactantes de Europa. Su forma circular — apodada cariñosamente "Paddy's Wigwam" por los liverpudianos — rematada por una corona de vidrieras psicodélicas de color azul, verde y rojo, es radicalmente diferente a cualquier otra iglesia que hayas visto. Construida entre 1962 y 1967, su interior circular con el altar en el centro y los rayos de luz de colores filtrándose desde la linterna es una experiencia casi mística. Está a pocos minutos a pie de la Catedral Anglicana.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita (donativo voluntario)</span>
+      <div class="place-tip">💡 El contraste entre esta catedral y la Anglicana —construidas en la misma época pero en estilos radicalmente opuestos— es uno de los más llamativos de cualquier ciudad del mundo.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Liverpool_Metropolitan_Cathedral" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Chinatown+Arch+Liverpool&destination=Liverpool+Metropolitan+Cathedral&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Liverpool_Cathedral" src="" alt="Liverpool Cathedral">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Catedral Anglicana de Liverpool</div>
+        <span class="badge b-must">La más grande de UK</span>
+      </div>
+      <p class="place-desc">La catedral más grande del mundo anglosajón y el quinto edificio religioso más grande del planeta. Sus dimensiones son abrumadoras: 188 metros de largo y una torre de 100 metros desde la que se ven hasta las colinas de Gales en días despejados. El interior es sobrecogedor, especialmente el órgano — el más grande de Reino Unido.</p>
+      <span class="place-entry entry-mixed">🔵 Interior gratis · Torre: ~£5,50 p/p</span>
+      <div class="place-tip">💡 Sube a la torre (pequeño coste) para las mejores vistas de Liverpool y el Mersey.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Liverpool_Cathedral" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Chinatown+Arch+Liverpool&destination=Liverpool+Cathedral&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🍽️ 14:00 · Almuerzo en Liverpool</div>
+  <div class="food-block">
+    <div class="food-header">🍴 Almuerzo en el Waterfront</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🍺</div>
+        <div class="food-info">
+          <div class="food-name">The Pump House <span class="food-tag ft-british">Pub en muelle</span></div>
+          <div class="food-desc">Pub victoriano en el Albert Dock con vistas al Mersey. Fish & chips clásicos y ambiente auténtico. Muy popular entre locales al mediodía.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=The+Pump+House+Liverpool&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍛</div>
+        <div class="food-info">
+          <div class="food-name">Mowgli Street Food <span class="food-tag ft-oriental">India Moderna</span></div>
+          <div class="food-desc">Cocina india contemporánea en pequeños platos para compartir. Los "Bunny Chow" (pan vaciado con curry) son imprescindibles. En Bold Street, la calle más alternativa de Liverpool.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=Mowgli+Street+Food+Bold+Street+Liverpool&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍔</div>
+        <div class="food-info">
+          <div class="food-name">Honest Burgers <span class="food-tag ft-burger">Burgers gourmet</span></div>
+          <div class="food-desc">Carne de vaca libre, pan brioche casero y las míticas patatas con romero y sal. Una de las mejores hamburguesas del país.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=Honest+Burgers+Liverpool&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Rudy's Neapolitan Pizza <span class="food-tag ft-pizza">Napolitana</span></div>
+          <div class="food-desc">La franquicia de pizza napolitana favorita del norte de Inglaterra, ahora también en Liverpool. Masa de fermentación lenta e ingredientes importados de Italia. Siempre una garantía.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=Rudy%27s+Neapolitan+Pizza+Castle+Street+Liverpool&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🧱 15:30 · LEGO Store Liverpool</div>
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Liverpool_One" data-emoji="🧱" src="" alt="Liverpool ONE">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">LEGO Store · Liverpool ONE</div>
+        <span class="badge b-lego">LEGO</span>
+      </div>
+      <p class="place-desc">El LEGO Store de Liverpool está dentro del gran centro comercial Liverpool ONE, a pocos minutos del Albert Dock y de camino a Mathew Street. Sets exclusivos de Liverpool, minifiguras de los Beatles y la ciudad. Una parada obligada antes de llegar al Cavern Club.</p>
+      <span class="place-entry entry-free">✅ Gratis entrar · pagas lo que compras</span>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Liverpool_One" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Royal+Liver+Building&destination=LEGO+Store+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🎸 16:30 · The Beatles Experience</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="The_Cavern_Club" src="" alt="The Cavern Club">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">The Cavern Club · Mathew Street</div>
+        <span class="badge b-music">Lugar de peregrinación</span>
+      </div>
+      <p class="place-desc">El club más famoso de la historia del rock. Abierto en 1957 como sala de jazz, The Beatles actuaron aquí <strong>292 veces</strong> entre 1961 y 1963, antes de ser descubiertos por su manager Brian Epstein. Fue demolido en 1973 pero reconstruido en 1984 con los ladrillos originales. Hoy hay música en directo prácticamente todo el día — grupos tributo de Beatles y artistas locales mantienen vivo el sonido que cambió el mundo.</p>
+      <span class="place-entry entry-mixed">🔵 Entrada libre de día · algunos shows nocturnos de pago</span>
+      <div class="place-tip">💡 Las paredes están llenas de placas con los nombres de artistas que actuaron aquí. La entrada al sótano suele ser libre.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/The_Cavern_Club" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=LEGO+Store+Liverpool&destination=Mathew+Street+Liverpool&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+        <a href="https://www.cavernclub.eu" target="_blank" class="btn-info">🌐 Web oficial</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="transport-card" style="background: linear-gradient(135deg, #065f46, #059669);">
+    <div class="transport-icon">🚆</div>
+    <div class="transport-info">
+      <div class="transport-title">18:30 · Tren de vuelta: Liverpool → Mánchester</div>
+      <div class="transport-sub">Lime St → Piccadilly · Llegada ~19:15</div>
+    </div>
+    <a href="https://www.google.com/maps/dir/?api=1&origin=Mathew+Street+Liverpool&destination=Liverpool+Lime+Street+Station&travelmode=walking" target="_blank" class="transport-link">A la estación →</a>
+  </div>
+
+  <div class="section-label">🍷 20:00 · Cena en Mánchester · Northern Quarter</div>
+  <div class="food-block">
+    <div class="food-header">🌙 Cena en el NQ — el barrio más animado de la ciudad</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🏪</div>
+        <div class="food-info">
+          <div class="food-name">Mackie Mayor <span class="food-tag ft-british">Mercado gastronómico</span></div>
+          <div class="food-desc">Antiguo mercado de carne victoriano reconvertido en food hall con una docena de puestos de cocina internacional. Cada uno elige lo que quiere y se comparte en las mesas comunes. Ambiente de cervecería artesanal, muy popular.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Mackie+Mayor+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍗</div>
+        <div class="food-info">
+          <div class="food-name">Yard & Coop <span class="food-tag ft-burger">Pollo gourmet</span></div>
+          <div class="food-desc">Pollo frito y a la parrilla de calidad gourmet, con salsas caseras. Ambiente festivo muy Northern Quarter. Los bocadillos de pollo frito son adictivos.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Yard+%26+Coop+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍜</div>
+        <div class="food-info">
+          <div class="food-name">Tokyo Ramen <span class="food-tag ft-oriental">Ramen artesanal</span></div>
+          <div class="food-desc">Ramen artesanal preparado al momento con caldos de cocción lenta. Uno de los mejores ramen del Northern Quarter. Ideal para reponer fuerzas después de un día largo.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Tokyo+Ramen+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍺</div>
+        <div class="food-info">
+          <div class="food-name">NQ Yard <span class="food-tag ft-british">Tapas y bares</span></div>
+          <div class="food-desc">Ambiente de bares del Northern Quarter donde picar algo y tomar unas cervezas artesanas. Más informalidad que restaurante — perfecto para el primer viernes de viaje.</div>
+          <a href="https://maps.google.com/?q=Northern+Quarter+Manchester" target="_blank" class="food-link">📍 Ver en Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🎉 21:30 · Noche en el Gay Village</div>
+  <div class="info-card">
+    <strong>🏳️‍🌈 Segunda noche en Canal Street</strong>
+    <p>Noche de viernes — la más animada de la semana. <a href="#" onclick="openTab('pubs', document.querySelectorAll('.tab-btn')[5]); return false;" style="color:#7c3aed;font-weight:800;">👉 Ver Guía de Pubs →</a></p>
+  </div>
+</div>
+
+<div id="sabado" class="tab-panel">
+  <h2 class="day-heading">Sábado 5 Sep · Alan Turing, Ciencia, Castlefield & Cultura</h2>
+
+  <div class="section-label">💻 10:00 · Alan Turing & Campus</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Alan_Turing_Memorial" data-emoji="💻" src="" alt="Alan Turing Memorial">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Estatua de Alan Turing · Sackville Gardens</div>
+        <span class="badge b-lgbtq">Ícono LGTBIQ+</span>
+      </div>
+      <p class="place-desc">Estatua de bronce del matemático, criptógrafo y padre de la informática moderna, sentado con una manzana parcialmente mordida en la mano (el mismo método que usó para suicidarse tras ser condenado por su homosexualidad). Turing fue el cerebro detrás de la máquina Enigma que descifró los códigos nazis, acortando la Segunda Guerra Mundial en años. La estatua es a la vez un homenaje y un acto de reparación histórica por la injusticia que sufrió.</p>
+      <span class="place-entry entry-free">✅ Gratuito</span>
+      <div class="place-tip">💡 Está en Sackville Gardens, a pocos metros del Gay Village. Es un lugar muy especial para la comunidad LGTBIQ+ de toda Europa — siempre hay flores y mensajes a sus pies.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Alan_Turing_Memorial" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Alan+Turing+Memorial+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="University_of_Manchester" src="" alt="University of Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Campus de la Universidad de Mánchester</div>
+        <span class="badge b-culture">25 Premios Nobel</span>
+      </div>
+      <p class="place-desc">La Universidad de Mánchester ha producido más ganadores del Premio Nobel per cápita que ninguna otra institución del mundo: 25 premios, incluyendo Ernest Rutherford (descubrimiento del núcleo atómico) y Alan Turing. Aquí también se descubrió el grafeno en 2004. Su campus victoriano de ladrillo rojo es bellísimo y se puede pasear libremente.</p>
+      <span class="place-entry entry-free">✅ Campus abierto y gratuito</span>
+      <div class="place-tip">💡 El campus es abierto al público. La cafetería del Union es buena y barata.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/University_of_Manchester" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Alan+Turing+Memorial+Manchester&destination=University+of+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Manchester_Museum" data-emoji="🦕" src="" alt="Manchester Museum">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Manchester Museum</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">Uno de los mejores museos universitarios del mundo, situado en el propio campus. Su colección abarca desde momias egipcias originales — con escáneres que permiten ver el interior de los sarcófagos sin abrirlos — hasta esqueletos de dinosaurios, colecciones de historia natural y una impresionante sección de culturas del mundo. Reabrió en 2023 tras una renovación de £15 millones que lo ha convertido en uno de los museos más modernos y accesibles del país. Completamente gratuito.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La sala de Egipto con las momias y los escáneres 3D es extraordinaria. No tiene nada que envidiar a los grandes museos de Londres.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Manchester_Museum" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=University+of+Manchester&destination=Manchester+Museum&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Whitworth_Art_Gallery" data-emoji="🎨" src="" alt="Whitworth Art Gallery">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">The Whitworth · Galería de Arte</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">Una de las mejores galerías de arte del norte de Inglaterra, integrada en un espectacular edificio moderno dentro de Whitworth Park. Fusiona colecciones de textiles históricos, papel pintado victoriano y arte contemporáneo internacional con exposiciones que rotan constantemente. El edificio en sí, con su fachada de cristal que se abre al parque, es una obra de arquitectura notable. Está a apenas 5 minutos a pie del Manchester Museum.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La cafetería del Whitworth dentro del parque es perfecta para un café antes de seguir hacia Castlefield.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Whitworth_Art_Gallery" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Museum&destination=Whitworth+Art+Gallery+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🍽️ 13:00 · Almuerzo</div>
+  <div class="food-block">
+    <div class="food-header">🍴 Almuerzo — zona universidad / centro</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🥩</div>
+        <div class="food-info">
+          <div class="food-name">Flat Iron <span class="food-tag ft-british">Chuletones</span></div>
+          <div class="food-desc">Steakhouse especializado en flat iron steak — un corte poco conocido pero muy sabroso y económico. Carne de calidad, ambiente informal, siempre animado. Una de las mejores relaciones calidad-precio de la ciudad.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Alan+Turing+Building+Manchester&destination=Flat+Iron+Deansgate+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍛</div>
+        <div class="food-info">
+          <div class="food-name">Dishoom <span class="food-tag ft-oriental">Café de Bombay</span></div>
+          <div class="food-desc">Los cafés iraní-indios de Bombay de los años 60 hechos restaurante. Ambiente de película, cocina increíble. El desayuno de bacon naan y el Mattar Paneer son legendarios. Cola habitual — reserva si puedes.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Alan+Turing+Building+Manchester&destination=Dishoom+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Rudy's Peter Street <span class="food-tag ft-pizza">Napolitana</span></div>
+          <div class="food-desc">Considerada la mejor pizza de Mánchester por la mayoría de locales. Masa de fermentación lenta, ingredientes importados de Nápoles, horno de leña. Sin reservas — apúntate en la lista y espera con una cerveza.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Alan+Turing+Building+Manchester&destination=Rudy%27s+Neapolitan+Pizza+Peter+Street+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🥙</div>
+        <div class="food-info">
+          <div class="food-name">Comptoir Libanais <span class="food-tag ft-kebab">Libanés</span></div>
+          <div class="food-desc">Cocina libanesa fresca y ligera en Spinningfields. Hummus, falafel, shawarma y ensaladas coloridas. Perfecto si se quiere algo más ligero antes de la tarde de museos y paseos.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Alan+Turing+Building+Manchester&destination=Comptoir+Libanais+Spinningfields+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🚀 14:30 · Ciencia, Castlefield & Arquitectura</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Science_and_Industry_Museum,_Manchester" src="" alt="Science and Industry Museum Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Science & Industry Museum</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">Uno de los mejores museos de ciencia e industria del mundo, instalado en el complejo de Liverpool Road — <strong>la estación de tren más antigua del mundo</strong> (1830). Cuenta la historia de la Revolución Industrial que nació precisamente aquí, en Mánchester: el vapor, el telar mecánico, las locomotoras originales, la primera computadora de transistores.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 No te pierdas el gran hall de las locomotoras de vapor originales del siglo XIX. Completamente gratuito.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Science_and_Industry_Museum,_Manchester" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=University+of+Manchester&destination=Science+and+Industry+Museum+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+        <a href="https://www.scienceandindustrymuseum.org.uk" target="_blank" class="btn-info">🌐 Web</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Castlefield" data-emoji="🏛️" src="" alt="Castlefield, Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Castlefield · Fortaleza Romana & Canales</div>
+        <span class="badge b-history">Año 79 d.C.</span>
+      </div>
+      <p class="place-desc">El origen mismo de Mánchester. Los romanos fundaron aquí el fuerte <strong>Mamucium</strong> en el año 79 d.C. Pero Castlefield también es la cuna de la Revolución Industrial: fue el primer punto de la primera red de canales de Inglaterra (1761) y aquí llegó el primer tren de pasajeros del mundo (1830). Hoy es un sereno paraje urbano con terrazas sobre el canal y anfiteatro al aire libre.</p>
+      <span class="place-entry entry-free">✅ Parque gratuito</span>
+      <div class="place-tip">💡 Los puentes de hierro sobre los canales son perfectos para fotografiar. En verano hay conciertos al aire libre en el anfiteatro.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Castlefield" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Science+and+Industry+Museum+Manchester&destination=Castlefield+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Beetham_Tower" data-emoji="🏙️" src="" alt="Beetham Tower">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Torre Beetham & Great Northern Warehouse</div>
+        <span class="badge b-culture">Arquitectura</span>
+      </div>
+      <p class="place-desc">La <strong>Torre Beetham</strong> (47 plantas, 169 metros) es el rascacielos más alto de Mánchester por su peculiar hoja de cristal que sobresale por encima del Hilton Hotel. El famoso "zumbido de Beetham" — un sonido de baja frecuencia emitido por el panel de cristal en días de viento — es ya parte del folklore de la ciudad. Al lado, el <strong>Great Northern Warehouse</strong> victoriano reconvertido en bowling, cine y restaurantes.</p>
+      <span class="place-entry entry-free">✅ Exterior gratuito · bowling y ocio de pago</span>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Beetham_Tower" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Castlefield+Manchester&destination=Beetham+Tower+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="People's_History_Museum" data-emoji="✊" src="" alt="People's History Museum">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">People's History Museum</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">El mejor museo del mundo dedicado a la historia de la democracia y los derechos del pueblo, situado en un antiguo almacén hidráulico de Spinningfields. Cuenta la historia del movimiento sufragista, los sindicatos, el movimiento LGTBIQ+, las huelgas obreras y la lucha por el voto universal — todo comenzó a pocos metros de aquí, en Mánchester. La Masacre de Peterloo (1819), que inspiró el nombre de "Manchester" en todo el mundo, tiene aquí un memorial extraordinario.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La bandera del movimiento obrero de 1819, conservada aquí, es uno de los objetos históricos más importantes de la historia social británica. Está de camino a John Rylands.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/People%27s_History_Museum" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Beetham+Tower+Manchester&destination=People%27s+History+Museum+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="John_Rylands_Library" src="" alt="John Rylands Library">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">John Rylands Library</div>
+        <span class="badge b-must">La más bella del UK</span>
+      </div>
+      <p class="place-desc">Uno de los edificios más espectaculares de toda Inglaterra y la biblioteca más bella del país sin discusión. Construida en estilo neogótico victoriano entre 1890 y 1900, alberga más de un millón de libros y manuscritos medievales. El interior — arcos ojivales, vitrales de colores, madera oscura, silencio absoluto — es puro Harry Potter.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La entrada es completamente gratuita. Si puedes, ve a última hora para tener más silencio y mejor luz de tarde.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/John_Rylands_Library" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Beetham+Tower+Manchester&destination=John+Rylands+Library&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+        <a href="https://www.library.manchester.ac.uk/rylands/" target="_blank" class="btn-info">🌐 Web</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🍷 20:00 · Cena</div>
+  <div class="food-block">
+    <div class="food-header">🌙 Cena — noche de sábado</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🍽️</div>
+        <div class="food-info">
+          <div class="food-name">Velvet Restaurant <span class="food-tag ft-british">Británico</span></div>
+          <div class="food-desc">Restaurante sofisticado en Canal Street, muy popular entre el público LGTBIQ+ local. Carta de cocina británica moderna con buenas opciones vegetarianas. Ambiente elegante sin ser pretencioso.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Velvet+Restaurant+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🏛️</div>
+        <div class="food-info">
+          <div class="food-name">The Refuge <span class="food-tag ft-british">Victoriano</span></div>
+          <div class="food-desc">Bar y restaurante instalado en la impresionante planta baja del antiguo Refuge Assurance Building — un palacio victoriano con columnas, mosaicos y arcos de hierro forjado. Cocina británica actualizada y cócteles de calidad en un ambiente de película.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=The+Refuge+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🐟</div>
+        <div class="food-info">
+          <div class="food-name">TNQ Restaurant <span class="food-tag ft-british">Británico moderno</span></div>
+          <div class="food-desc">Restaurante del Northern Quarter con una de las mejores cartas de cocina británica contemporánea de la ciudad. Productos locales, presentaciones cuidadas y ambiente tranquilo. Ideal para una cena más reposada de sábado.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=TNQ+Restaurant+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🫒</div>
+        <div class="food-info">
+          <div class="food-name">El Gato Negro <span class="food-tag ft-kebab">Tapas de autor</span></div>
+          <div class="food-desc">Las mejores tapas de Mánchester — cocinadas con técnica francesa y alma española. Ambiente oscuro y sofisticado, muy popular para noches especiales. Reserva obligatoria los sábados.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=El+Gato+Negro+Tapas+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🎉 22:00 · Clubs & Drag Shows</div>
+  <div class="info-card">
+    <strong>🏳️‍🌈 La noche grande — sábado en Canal Street</strong>
+    <p>La noche más animada de la semana. Drag shows, clubs hasta el amanecer. <a href="#" onclick="openTab('pubs', document.querySelectorAll('.tab-btn')[5]); return false;" style="color:#7c3aed;font-weight:800;">👉 Ver Guía de Pubs →</a></p>
+  </div>
+</div>
+
+<div id="domingo" class="tab-panel">
+  <h2 class="day-heading">Domingo 6 Sep · Arte, Ancoats, New Islington & Concierto KATSEYE</h2>
+
+  <div class="section-label">🎨 10:30 · Arte y Canales</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Manchester_Art_Gallery" src="" alt="Manchester Art Gallery">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Manchester Art Gallery</div>
+        <span class="badge b-free">Entrada gratis</span>
+      </div>
+      <p class="place-desc">Una de las colecciones de arte más importantes de Inglaterra fuera de Londres, con especial fortaleza en los prerrafaelitas — el movimiento pictórico victoriano que desafió al academicismo con colores intensísimos y temas medievales. Destaca especialmente <em>"Hylas and the Nymphs"</em> de Waterhouse. También tiene impresionismo, arte contemporáneo y diseño del siglo XX.</p>
+      <span class="place-entry entry-free">✅ Entrada gratuita</span>
+      <div class="place-tip">💡 La colección de prerrafaelitas es de las mejores del mundo. Completamente gratuito.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Manchester_Art_Gallery" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Manchester+Art+Gallery&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Northern_Quarter,_Manchester" src="" alt="Northern Quarter, Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Northern Quarter · El barrio creativo</div>
+        <span class="badge b-culture">Arte & Alternativo</span>
+      </div>
+      <p class="place-desc">El barrio más bohemio y alternativo de Mánchester — el Soho de Nueva York o el Brick Lane de Londres. Sus calles adoquinadas están llenas de murales gigantes de artistas locales, tiendas de discos independientes, cafeterías de especialidad y estudios de tatuaje. La escena musical de Mánchester — desde los Smiths y Oasis hasta el rave de los 90 — tiene sus raíces aquí.</p>
+      <span class="place-entry entry-free">✅ Gratuito · tiendas y cafés de pago</span>
+      <div class="place-tip">💡 No te pierdas Tib Street y Stevenson Square. Los murales cambian constantemente — es un museo al aire libre.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Northern_Quarter,_Manchester" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Art+Gallery&destination=Northern+Quarter+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="New_Islington" data-emoji="⛵" src="" alt="New Islington, Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">New Islington & Canales de Ancoats</div>
+        <span class="badge b-nature">Paseo</span>
+      </div>
+      <p class="place-desc">El barrio más moderno de Mánchester, sobre un antiguo solar industrial junto a los canales del siglo XVIII. La marina de New Islington — rodeada de casas flotantes, apartamentos de diseño y jardines — es uno de los rincones más tranquilos y fotogénicos de la ciudad. Ancoats, su barrio adyacente, es hoy el epicentro del café de especialidad y la gastronomía creativa.</p>
+      <span class="place-entry entry-free">✅ Gratuito</span>
+      <div class="place-tip">💡 El paseo por la orilla del canal desde Ancoats hasta New Islington es de los más bonitos de la ciudad. Muy fotogénico con las casas flotantes de colores.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/New_Islington" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/dir/?api=1&origin=Northern+Quarter+Manchester&destination=New+Islington+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🍽️ 13:00 · Almuerzo en Ancoats</div>
+  <div class="food-block">
+    <div class="food-header">🍴 Almuerzo — zona Ancoats</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🍽️</div>
+        <div class="food-info">
+          <div class="food-name">Elnecot <span class="food-tag ft-british">Sunday Roast</span></div>
+          <div class="food-desc">Restaurante de Ancoats con una de las mejores cartas de domingo de la ciudad — Sunday Roast impecable y pescado de calidad. Ambiente de pub moderno con cocina de autor.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Art+Gallery&destination=Elnecot+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🥐</div>
+        <div class="food-info">
+          <div class="food-name">Pollen Bakery <span class="food-tag ft-brunch">Brunch & Hojaldres</span></div>
+          <div class="food-desc">La panadería artesana de referencia de Ancoats. Croissants, hojaldres y bollería recién horneada. Perfecta para un brunch relajado de domingo antes del concierto.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Art+Gallery&destination=Pollen+Bakery+Ancoats+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Ciaooo Pizza <span class="food-tag ft-pizza">Pizza bordes queso</span></div>
+          <div class="food-desc">Pizza napolitana con los famosos bordes rellenos de queso. Masa esponjosa, ingredientes frescos. Muy popular los domingos entre los vecinos del barrio.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Art+Gallery&destination=Ciaooo+Pizza+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍕</div>
+        <div class="food-info">
+          <div class="food-name">Purezza <span class="food-tag ft-pizza">Pizza artesana</span></div>
+          <div class="food-desc">Pizzería de masa artesana con muy buenas opciones veganas y vegetarianas sin renunciar al sabor. Una de las favoritas del barrio para el domingo. Ambiente tranquilo y sin prisas.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Art+Gallery&destination=Purezza+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">✨ 14:30 · Opcional — si quedáis con energía</div>
+
+  <div style="background:#fefce8;border:1px solid #fde047;border-radius:12px;padding:13px 14px;margin-bottom:12px;font-size:12px;color:#713f12;">
+    <strong>💡 Actividades opcionales</strong> — solo si no necesitáis descansar antes del concierto. Sin presión.
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Ancoats" data-emoji="🏭" src="" alt="Ancoats Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Street Art de Ancoats · Paseo por los Canales</div>
+        <span class="badge b-nature">Opcional · 45 min</span>
+      </div>
+      <p class="place-desc">Ancoats fue el primer barrio industrial del mundo — sus telares de algodón del siglo XVIII alimentaron el Imperio Británico. Hoy sus fábricas de ladrillo rojo están reconvertidas en lofts de diseño y sus muros cubiertos de murales de artistas internacionales que cambian cada temporada. Un paseo tranquilo por los canales entre sus molinos victorianos es uno de los rincones más fotogénicos de toda la ciudad, ya que ya estaréis por la zona de Ancoats/New Islington.</p>
+      <span class="place-entry entry-free">✅ Gratuito</span>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Ancoats" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://www.google.com/maps/search/Ancoats+Manchester+street+art" target="_blank" class="btn-maps">📍 Ver en Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Mackie_Mayor" data-emoji="🍺" src="" alt="Mackie Mayor Manchester">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Mackie Mayor · Cerveza artesana en el mercado</div>
+        <span class="badge b-culture">Opcional · Relajado</span>
+      </div>
+      <p class="place-desc">El antiguo mercado de carne victoriano de Mánchester reconvertido en food hall con una enorme variedad de puestos de cocina internacional y cervecería artesana. Perfecto para tomar una caña tranquila antes de volver al hotel a prepararse. Tiene mucho ambiente los domingos por la tarde — es donde van los locales. Está en el Northern Quarter, muy cerca de la ruta del día.</p>
+      <span class="place-entry entry-free">✅ Gratis entrar · consumiciones de pago</span>
+      <div class="place-actions">
+        <a href="https://www.google.com/maps/dir/?api=1&origin=New+Islington+Manchester&destination=Mackie+Mayor+Manchester&travelmode=walking" target="_blank" class="btn-maps">📍 Cómo llegar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">😴 15:30 · Descanso en el hotel</div>
+  <div class="info-card">
+    <strong>🏨 Pausa antes del concierto</strong>
+    <p>Vuelta al hotel para descansar y prepararse para el concierto de KATSEYE. Buena idea cargar el móvil y revisar el ticket antes de salir.</p>
+  </div>
+
+  <div class="section-label">⚡ 17:00 · Cena rápida antes del concierto</div>
+  <div class="food-block">
+    <div class="food-header">🍔 Cena express — cerca del hotel, antes del tranvía</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">🍔</div>
+        <div class="food-info">
+          <div class="food-name">Archie's <span class="food-tag ft-burger">Burgers & Shakes</span></div>
+          <div class="food-desc">Burgers y batidos de calidad a precio razonable, muy cerca de Piccadilly Gardens. Perfecto para una cena rápida antes de coger el tranvía. Siempre hay cola pero va rápido.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Archies+Piccadilly+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍗</div>
+        <div class="food-info">
+          <div class="food-name">Nando's <span class="food-tag ft-burger">Pollo peri-peri</span></div>
+          <div class="food-desc">Fiable, rápido y contundente. El pollo peri-peri da energía para aguantar un concierto de varias horas. Siempre una opción segura cuando el tiempo es limitado.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Nandos+Piccadilly+Gardens+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🧀</div>
+        <div class="food-info">
+          <div class="food-name">Northern Soul Grilled Cheese <span class="food-tag ft-burger">Sándwiches</span></div>
+          <div class="food-desc">El sándwich de queso a la plancha más famoso de Mánchester. Combinaciones imposibles, quesos fundidos, pan artesano. Rápido, contundente y diferente. Perfecto para llevarse mientras se camina a la parada.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Northern+Soul+Grilled+Cheese+Piccadilly+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🍩</div>
+        <div class="food-info">
+          <div class="food-name">Siop Shop <span class="food-tag ft-brunch">Dónuts & Dulces</span></div>
+          <div class="food-desc">Pequeña tienda de dónuts artesanos y dulces creativos. Para los que prefieren algo dulce antes del concierto. Los sabores cambian cada semana — siempre hay sorpresa.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Siop+Shop+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="transport-card">
+    <div class="transport-icon">🚃</div>
+    <div class="transport-info">
+      <div class="transport-title">18:00 · Tranvía a Co-op Live</div>
+      <div class="transport-sub">Piccadilly Gardens → Etihad Campus · 3 paradas · ~15 min</div>
+    </div>
+    <a href="https://www.google.com/maps/dir/?api=1&origin=Piccadilly+Gardens+Tram+Stop&destination=Co-op+Live+Manchester&travelmode=transit" target="_blank" class="transport-link">Ruta →</a>
+  </div>
+
+  <div class="section-label">🎤 18:30 · Concierto KATSEYE</div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Katseye" data-emoji="🎤" src="" alt="KATSEYE">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">KATSEYE · Concierto</div>
+        <span class="badge b-concert">🎤 Esta noche</span>
+      </div>
+      <p class="place-desc">Grupo femenino global formado en 2024 a través del reality show <em>Dream Academy</em>, la colaboración entre HYBE (BTS, Tomorrow X Together) y Geffen Records. Sus seis integrantes — Sophia, Lara, Daniela, Yoonchae, Megan y Manon — representan Filipinas, India, Latinoamérica, Corea, EE.UU. y Suiza. Su debut con "Touch" y el EP <em>SIS (Soft Is Strong)</em> las convirtió en una de las apuestas más seguidas del pop internacional.</p>
+      <span class="place-entry entry-paid">🎫 Entrada de pago · ya tenéis tickets</span>
+      <div class="place-actions" style="margin-top:8px;">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="background:#fdf2f8;border:1px solid #f0abfc;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#86198f;">🕕 18:30 – 22:30</span>
+          <span style="background:#fdf2f8;border:1px solid #f0abfc;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#86198f;">🚃 Tranvía desde Piccadilly</span>
+          <span style="background:#fdf2f8;border:1px solid #f0abfc;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#86198f;">📍 Etihad Campus</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="place-card">
+    <div class="place-img-wrap">
+      <img class="place-img" data-wiki="Co-op_Live" data-emoji="🎤" src="" alt="Co-op Live">
+    </div>
+    <div class="place-body">
+      <div class="place-top">
+        <div class="place-name">Co-op Live · El recinto</div>
+        <span class="badge b-music">23.500 personas</span>
+      </div>
+      <p class="place-desc">El arena de música en vivo más grande del Reino Unido, inaugurado en 2024 con un diseño interior revolucionario. Con capacidad para 23.500 personas, supera al O2 de Londres y tiene la acústica más avanzada de cualquier recinto europeo. Está junto al estadio del Manchester City en el Etihad Campus.</p>
+      <span class="place-entry entry-paid">🎫 Entrada de pago (ya tenéis tickets)</span>
+      <div class="place-tip">💡 Abre puertas 2h antes. Lleva el ticket descargado sin depender de wifi.</div>
+      <div class="place-actions">
+        <a href="https://en.wikipedia.org/wiki/Co-op_Live" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://en.wikipedia.org/wiki/Katseye" target="_blank" class="btn-info">📖 Wikipedia</a>
+        <a href="https://maps.google.com/?q=Co-op+Live+Manchester" target="_blank" class="btn-maps">📍 Ver recinto</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🎉 22:30 · After-party en el Gay Village</div>
+  <div class="info-card">
+    <strong>🏳️‍🌈 After-party post-concierto</strong>
+    <p>Copas de cierre en Canal Street después del show. <a href="#" onclick="openTab('pubs', document.querySelectorAll('.tab-btn')[5]); return false;" style="color:#7c3aed;font-weight:800;">👉 Ver Guía de Pubs →</a></p>
+  </div>
+</div>
+
+
+
+<div id="lunes" class="tab-panel">
+  <h2 class="day-heading">Lunes 7 Sep · Brunch, Check-out & Vuelo a Casa</h2>
+
+  <div class="info-card">
+    <strong>⏰ Horarios clave del día:</strong>
+    <p>• 09:00 – Brunch (sale del hotel a las 09:00)</p>
+    <p>• 11:00 – Check-out obligatorio</p>
+    <p>• 11:30 – Tren a Piccadilly Station (consigna de maletas en la estación si hace falta)</p>
+    <p>• 14:30 – Vuelo FR3187 · MAN → MAD · Llega 18:05</p>
+  </div>
+
+  <div class="section-label">☕ Brunch de despedida (09:00–11:00)</div>
+  <div class="food-block">
+    <div class="food-header">🍳 Los mejores brunches de Mánchester — para cerrar el viaje en grande</div>
+    <div class="food-list">
+      <div class="food-item">
+        <div class="food-emoji">☕</div>
+        <div class="food-info">
+          <div class="food-name">Federal Cafe & Bar <span class="food-tag ft-brunch">El más famoso</span></div>
+          <div class="food-desc">El café de especialidad de referencia en Mánchester, inspirado en la cultura australiana del café. Huevos en todas sus formas, tostadas artesanas, flat whites perfectos. Colas habituales los fines de semana pero el lunes es más tranquilo.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Federal+Cafe+Bar+Nicholas+Street+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🥞</div>
+        <div class="food-info">
+          <div class="food-name">Moose Coffee <span class="food-tag ft-brunch">Pancakes & Waffles</span></div>
+          <div class="food-desc">Brunch de inspiración canadiense con los mejores pancakes de la ciudad — enormes, esponjosos, con sirope de arce auténtico. Ideal para un desayuno contundente antes del vuelo.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Moose+Coffee+York+Street+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+      <div class="food-item">
+        <div class="food-emoji">🥐</div>
+        <div class="food-info">
+          <div class="food-name">Gooey Co <span class="food-tag ft-brunch">Croissants & Dulces</span></div>
+          <div class="food-desc">Pequeña pastelería artesana especializada en croissants de mantequilla y cookies gigantes recién horneados. Para llevar si hay prisa — perfectos para desayunar camino a la estación.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Gooey+Co+Manchester&travelmode=walking" target="_blank" class="food-link">📍 Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="transport-card">
+    <div class="transport-icon">🚆</div>
+    <div class="transport-info">
+      <div class="transport-title">Tren Piccadilly → Aeropuerto de Manchester</div>
+      <div class="transport-sub">11:30 desde Piccadilly · ~20 min · Coger con margen</div>
+    </div>
+    <a href="https://www.google.com/maps/dir/?api=1&origin=Manchester+Piccadilly+Station&destination=Manchester+Airport+Station&travelmode=transit" target="_blank" class="transport-link">Ruta →</a>
+  </div>
+
+  <div class="transport-card">
+    <div class="transport-icon">✈️</div>
+    <div class="transport-info">
+      <div class="transport-title">Vuelo FR3187 · 14:30 MAN → 18:05 MAD</div>
+      <div class="transport-sub">Hacer check-in online la noche anterior · Facturar antes de las 13:30</div>
+    </div>
+    <a href="https://www.google.com/search?q=Ryanair+FR3187" target="_blank" class="transport-link">Estado →</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PUBS LGTBIQ+
+══════════════════════════════════ -->
+
+
+<div id="pubs" class="tab-panel">
+  <h2 class="day-heading">🍺 Guía Pubs & Clubs LGTBIQ+ · Gay Village</h2>
+  <p style="font-size:12px; color:#64748b; margin-bottom:14px;">Canal Street y alrededores · Todo a 3–5 min a pie del hotel · <a href="https://en.wikipedia.org/wiki/Canal_Street,_Manchester" target="_blank" style="color:#7c3aed;font-weight:700;">📖 Wikipedia Canal Street →</a></p>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="The_Churchill,_Manchester" data-emoji="🏳️‍🌈" src="" alt="Canal Street, Manchester">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">The Church</div>
+      <span class="pub-rating">★★★½☆ <b>3.7</b> <small>(<a href="https://www.google.com/maps/search/The+Church+Canal+Street+Manchester+gay+bar" target="_blank" style="color:#6b7280;">166 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🎭 Shows Drag</span><span class="pub-tag">💃 Bailar</span><span class="pub-tag">🎪 Cabaret</span></div>
+      <p class="pub-desc">El local de drag más famoso de Canal Street — posiblemente de todo el norte de Inglaterra. Sus drag queens son profesionales de primer nivel con shows estructurados: cabaret, bingo drag, performances temáticas. La pista de baile del fondo se llena hasta los topes los fines de semana. Ambiente eléctrico, inclusivo y absolutamente festivo. Casi ningún turista LGTBIQ+ que visite Mánchester se lo pierde.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 15:00 – 02:00 (Sáb hasta 03:00)</div>
+          <div class="pub-addr">📍 41 Canal Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=The+Church+Canal+Street+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-emoji="🍺" src="" alt="Via Manchester">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">Via Manchester</div>
+      <span class="pub-rating">★★★★☆ <b>4.3</b> <small>(<a href="https://www.google.com/maps/search/Via+Manchester+Canal+Street" target="_blank" style="color:#6b7280;">890 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🍺 Tomar algo</span><span class="pub-tag">🌊 Terraza canal</span><span class="pub-tag">🎭 Drag Shows</span></div>
+      <p class="pub-desc">El pub más fotogénico de Canal Street, con terrazas que se asoman literalmente sobre el agua del canal. Su arquitectura gótica victoriana y las fachadas iluminadas lo hacen inconfundible. Varios niveles con ambientes distintos: terraza exterior para comenzar la noche, bar central para socializar, y sala de baile con drag shows. Muy popular para el primer trago de la noche antes de seguir la ruta.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 12:00 – 01:00 (Vie/Sáb hasta 03:00)</div>
+          <div class="pub-addr">📍 28-30 Canal Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Via+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="G-A-Y" data-emoji="🎵" src="" alt="G-A-Y Manchester">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">G-A-Y Manchester</div>
+      <span class="pub-rating">★★½☆☆ <b>2.7</b> <small>(<a href="https://www.google.com/maps/search/G-A-Y+Manchester+Canal+Street" target="_blank" style="color:#6b7280;">470 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🎶 Música Pop</span><span class="pub-tag">💃 Bailar</span><span class="pub-tag">🧑‍🤝‍🧑 Público joven</span></div>
+      <p class="pub-desc">La versión mancuniana del legendario G-A-Y de Londres: tres plantas con vídeos musicales en pantallas gigantes, pop comercial a todo volumen, precios de bebida muy asequibles y un ambiente desenfadado perfecto para las primeras horas de noche. Sin pretensiones, máxima energía. Muy popular entre el público más joven y los que buscan pasarlo bien sin complicarse. Las noches de viernes y sábado son las más animadas.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 12:00 – 02:00 (Vie/Sáb hasta 03:00)</div>
+          <div class="pub-addr">📍 63 Canal Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=G-A-Y+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="Cruz_101" data-emoji="🎉" src="" alt="New York New York">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">New York New York</div>
+      <span class="pub-rating">★★★½☆ <b>3.9</b> <small>(<a href="https://www.google.com/maps/search/New+York+New+York+Manchester+gay+bar+Bloom+Street" target="_blank" style="color:#6b7280;">280 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🎉 The Party Palace</span><span class="pub-tag">🎤 Cabaret</span><span class="pub-tag">🌙 Cerrar la noche</span></div>
+      <p class="pub-desc">Autodenominado "The Party Palace", este local es el punto de no retorno de cualquier noche en el Gay Village. Hits comerciales, shows de cabaret espontáneos, DJs que van subiendo el ritmo hasta el amanecer. Ambiente absolutamente entregado — todo el mundo está ahí para pasárselo bien sin filtros. Las noches de sábado son épicas y el local puede aguantar hasta las 5:00 o 6:00 AM.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 16:00 – 03:00 (Vie/Sáb hasta 05:00)</div>
+          <div class="pub-addr">📍 95 Bloom Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=New+York+New+York+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="Sackville_Gardens" data-emoji="🍺" src="" alt="Thompson Arms">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">Thompson Arms</div>
+      <span class="pub-rating">★★½☆☆ <b>2.8</b> <small>(<a href="https://www.google.com/maps/search/Thompson+Arms+Manchester+Sackville+Street" target="_blank" style="color:#6b7280;">113 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🍺 Pub Clásico</span><span class="pub-tag">💬 Charla tranquila</span></div>
+      <p class="pub-desc">El pub tradicional del Gay Village: sin música a tope, sin shows, sin humo de máquina. Cervezas de grifo, madera oscura, gente de todas las edades charlando sin necesidad de gritar. Es el lugar perfecto para empezar la noche tranquilamente o para descansar entre locales. Uno de los más queridos por los locales precisamente por no intentar ser otra cosa que un buen pub.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 12:00 – 00:00 (Vie/Sáb hasta 02:00)</div>
+          <div class="pub-addr">📍 23 Sackville Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Thompson+Arms+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="The_Rembrandt_Hotel,_Manchester" data-emoji="🐻" src="" alt="The Rembrandt (RemBar)">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">The Rembrandt (RemBar)</div>
+      <span class="pub-rating">★★★½☆ <b>3.7</b> <small>(<a href="https://www.google.com/maps/search/The+Rembrandt+Manchester+gay+bar" target="_blank" style="color:#6b7280;">61 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🐻 Comunidad Bear</span><span class="pub-tag">🎵 DJs en planta alta</span></div>
+      <p class="pub-desc">Uno de los pubs históricos del Gay Village, abierto desde los años 70. La planta baja es un pub relajado y acogedor; la planta alta se convierte en club con DJs los fines de semana. Es el punto de encuentro tradicional de la comunidad bear, aunque su ambiente es abierto a todo el mundo. Historia viva del Village: sus paredes han visto décadas de Mánchester LGTBIQ+.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 12:00 – 01:00 (Vie/Sáb hasta 02:30)</div>
+          <div class="pub-addr">📍 33 Sackville Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=The+Rembrandt+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="Manchester_Gay_Village" data-emoji="🦅" src="" alt="The Eagle Manchester">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">The Eagle Manchester</div>
+      <span class="pub-rating">★★★★☆ <b>4.2</b> <small>(<a href="https://www.google.com/maps/search/The+Eagle+Manchester+gay+bar+Bloom+Street" target="_blank" style="color:#6b7280;">311 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🦅 Cuero / Alternativo</span><span class="pub-tag">🔊 Techno/House</span><span class="pub-tag">🌙 Club nocturno</span></div>
+      <p class="pub-desc">Club alternativo de estética industrial con música electrónica de verdad — techno, house, y géneros más duros. Frecuentado por la comunidad leather, osos y fetiche, pero el ambiente es abierto a quien respete el espacio. La pista de baile del sótano es oscura e intensa. Para los que buscan algo más underground que el pop de Canal Street.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 21:00 – 03:00 (Vie/Sáb hasta 04:00)</div>
+          <div class="pub-addr">📍 15 Bloom Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=The+Eagle+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-img-wrap">
+      <img class="pub-img" data-wiki="Cruz_101" data-emoji="🪩" src="" alt="Cruz 101">
+    </div>
+    <div class="pub-body">
+      <div class="pub-top"><div class="pub-name">Cruz 101</div>
+      <span class="pub-rating">★★★☆☆ <b>3.3</b> <small>(<a href="https://www.google.com/maps/search/Cruz+101+Manchester+Princess+Street" target="_blank" style="color:#6b7280;">222 reseñas Google ↗</a>)</small></span></div>
+      <div class="pub-tags"><span class="pub-tag">🪩 Discoteca</span><span class="pub-tag">🌅 Hasta el amanecer</span><span class="pub-tag">🎧 Varios DJs</span></div>
+      <p class="pub-desc">La discoteca principal del Gay Village para los que quieren cerrar la noche — o más bien abrir el día. Varias salas con géneros distintos, iluminación de club, y capacidad para aguantar hasta las 6:00 AM los sábados. Es el destino final natural de una noche en Canal Street. Después de Via, G-A-Y y New York New York, aquí termina (o continúa) todo.</p>
+      <div class="pub-meta">
+        <div>
+          <div class="pub-hours">⏰ 23:00 – 05:00 / 06:00</div>
+          <div class="pub-addr">📍 101 Princess Street · <a href="https://www.google.com/maps/dir/?api=1&origin=The+Gardens+Hotel+Manchester&destination=Cruz+101+Manchester&travelmode=walking" target="_blank" style="color:var(--blue);font-weight:700;font-size:11px;">Cómo llegar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://www.google.com/maps/search/gay+bars+and+clubs+Canal+Street+Manchester/@53.4774,-2.2378,17z" target="_blank" class="big-map-btn">
+    📍 Abrir Mapa Completo LGTBIQ+ en Google Maps
+  </a>
+</div>
+
+<!-- ══════════════════════════════════
+     CAMBIO £ → €
+══════════════════════════════════ -->
+<div id="cambio" class="tab-panel">
+  <h2 class="day-heading" style="--day-color:#0369a1;">💱 Cambio £ Libras → € Euros</h2>
+
+  <div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:14px;padding:18px 16px;margin-bottom:14px;color:#fff;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-weight:800;font-size:15px;">Tipo de cambio en tiempo real</div>
+      <div id="rate-updated" style="font-size:10px;opacity:.7;text-align:right;">Consultando BCE...</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:11px;opacity:.7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Tipo actual</div>
+      <div style="font-size:28px;font-weight:900;color:#fbbf24;">1 £ = <span id="rate-display">—</span> €</div>
+      <div style="font-size:11px;opacity:.6;margin-top:4px;">Fuente: Banco Central Europeo · Se actualiza cada 30 min</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;">
+        <div style="font-size:11px;opacity:.7;margin-bottom:4px;">Introduce libras £</div>
+        <input id="gbp-input" type="number" value="1" min="0" step="0.01"
+          style="width:100%;padding:10px 12px;border-radius:10px;border:none;
+                 font-size:22px;font-weight:800;color:#1e3a5f;background:#fff;box-sizing:border-box;">
+      </div>
+      <div style="font-size:24px;padding-top:18px;">→</div>
+      <div style="flex:1;text-align:right;">
+        <div style="font-size:11px;opacity:.7;margin-bottom:4px;">Equivale en euros €</div>
+        <div id="eur-result" style="font-size:28px;font-weight:900;color:#fbbf24;background:rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;">—</div>
+      </div>
+    </div>
+
+    <button onclick="fetchRate()" style="width:100%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+      color:#fff;border-radius:10px;padding:10px;font-size:13px;cursor:pointer;font-weight:700;">
+      🔄 Actualizar tipo de cambio
+    </button>
+  </div>
+
+  <div class="day-card">
+    <h3 style="font-size:14px;font-weight:800;margin:0 0 12px;color:#1e40af;">📋 Referencia rápida</h3>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:8px 6px;font-size:11px;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;">Libras £</th>
+          <th style="text-align:right;padding:8px 6px;font-size:11px;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;">Euros €</th>
+          <th style="text-align:right;padding:8px 6px;font-size:11px;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;">Referencia</th>
+        </tr>
+      </thead>
+      <tbody id="ref-table">
+        <tr><td colspan="3" style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-card" style="margin-top:14px;">
+    <strong>💡 Consejos útiles</strong>
+    <p style="margin-top:6px;">• Los cajeros y comercios en UK operan siempre en <strong>libras (£)</strong> — no aceptan euros.</p>
+    <p style="margin-top:4px;">• Evita cambiar dinero en el aeropuerto — el tipo suele ser un 8-12% peor que el real.</p>
+    <p style="margin-top:4px;">• Las tarjetas <strong>Revolut, Wise o N26</strong> aplican el tipo interbancario sin comisión.</p>
+    <p style="margin-top:4px;">• Los cajeros LINK en UK suelen tener mejor tipo que los de marca propia.</p>
+  </div>
+</div>
+
+<script>
+var currentRate = null;
+
+var refAmounts = [
+  { gbp: 1,   label: '1 libra' },
+  { gbp: 2,   label: '2 libras' },
+  { gbp: 5,   label: '5 libras' },
+  { gbp: 10,  label: '10 libras' },
+  { gbp: 15,  label: '15 libras (entrada pub)' },
+  { gbp: 17,  label: '£17 (Beatles Story)' },
+  { gbp: 20,  label: '20 libras' },
+  { gbp: 30,  label: '30 libras' },
+  { gbp: 50,  label: '50 libras' },
+  { gbp: 100, label: '100 libras' },
+  { gbp: 200, label: '200 libras' },
+];
+
+function setRateUI(rate, source) {
+  currentRate = rate;
+  var el  = document.getElementById('rate-display');
+  var upd = document.getElementById('rate-updated');
+  if (el)  el.textContent = rate.toFixed(4);
+  if (upd) {
+    var now = new Date();
+    upd.textContent = source + ' · ' +
+      now.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}) + ' ' +
+      now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  }
+  updateConversion();
+  updateTable();
+}
+
+function tryAPI(urls, index) {
+  if (index >= urls.length) {
+    var upd = document.getElementById('rate-updated');
+    if (upd) upd.textContent = '⚠️ Sin conexión a internet';
+    return;
+  }
+  var info = urls[index];
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', info.url, true);
+  xhr.timeout = 8000;
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        var rate = info.extract(d);
+        if (rate && !isNaN(rate)) { setRateUI(rate, info.source); return; }
+      } catch(e) {}
+    }
+    tryAPI(urls, index + 1);
+  };
+  xhr.onerror   = function() { tryAPI(urls, index + 1); };
+  xhr.ontimeout = function() { tryAPI(urls, index + 1); };
+  xhr.send();
+}
+
+function fetchRate() {
+  var upd = document.getElementById('rate-updated');
+  if (upd) upd.textContent = 'Consultando...';
+
+  tryAPI([
+    {
+      url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/gbp.json',
+      source: 'jsDelivr CDN',
+      extract: function(d) { return d.gbp && d.gbp.eur; }
+    },
+    {
+      url: 'https://api.frankfurter.app/latest?from=GBP&to=EUR',
+      source: 'Banco Central Europeo',
+      extract: function(d) { return d.rates && d.rates.EUR; }
+    },
+    {
+      url: 'https://open.er-api.com/v6/latest/GBP',
+      source: 'ExchangeRate-API',
+      extract: function(d) { return d.rates && d.rates.EUR; }
+    }
+  ], 0);
+}
+
+function updateConversion() {
+  if (!currentRate) return;
+  var inp = document.getElementById('gbp-input');
+  var res = document.getElementById('eur-result');
+  if (!inp || !res) return;
+  var gbp = parseFloat(inp.value) || 0;
+  res.textContent = (gbp * currentRate).toFixed(2) + ' €';
+}
+
+function updateTable() {
+  if (!currentRate) return;
+  var tbl = document.getElementById('ref-table');
+  if (!tbl) return;
+  tbl.innerHTML = refAmounts.map(function(r, i) {
+    return '<tr style="background:' + (i%2===0?'#f9fafb':'#fff') + '">' +
+      '<td style="padding:10px 6px;font-weight:700;font-size:14px;border-bottom:1px solid #f1f5f9;">£' + r.gbp + '</td>' +
+      '<td style="padding:10px 6px;text-align:right;font-weight:800;font-size:14px;color:#1d4ed8;border-bottom:1px solid #f1f5f9;">' + (r.gbp*currentRate).toFixed(2) + ' €</td>' +
+      '<td style="padding:10px 6px;text-align:right;font-size:11px;color:#9ca3af;border-bottom:1px solid #f1f5f9;">' + r.label + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+window.addEventListener('load', function() {
+  var inp = document.getElementById('gbp-input');
+  if (inp) inp.addEventListener('input', updateConversion);
+  fetchRate();
+  setInterval(fetchRate, 30 * 60 * 1000);
+});
+</script>
+
+<script>
+function openTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+<script>
+async function loadWikiImages() {
+  const imgs = document.querySelectorAll('img[data-wiki]');
+  const load = async (img) => {
+    const title = img.dataset.wiki;
+    try {
+      const url = 'https://en.wikipedia.org/w/api.php?action=query&titles='
+        + encodeURIComponent(title)
+        + '&prop=pageimages&format=json&pithumbsize=800&origin=*';
+      const res = await fetch(url);
+      const data = await res.json();
+      const pages = data.query.pages;
+      const page = pages[Object.keys(pages)[0]];
+      if (page && page.thumbnail && page.thumbnail.source) {
+        img.src = page.thumbnail.source;
+        img.style.opacity = '1';
+      } else {
+        img.closest('.place-img-wrap, .pub-img-wrap').innerHTML =
+          '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#e2e8f0;">' +
+          (img.dataset.emoji || '📍') + '</div>';
+      }
+    } catch(e) {
+      console.warn('Wiki img failed:', title, e);
+    }
+  };
+  // Load all in parallel
+  await Promise.all([...imgs].map(load));
+}
+window.addEventListener('load', loadWikiImages);
+</script>
+
+<!-- ══════════════════════════════════
+     CERCA DE MÍ
+══════════════════════════════════ -->
+<div id="cercami" class="tab-panel">
+  <h2 class="day-heading" style="--day-color:#059669;">📍 Cerca de mí</h2>
+
+  <div id="nm-ask" style="text-align:center;padding:30px 16px;">
+    <div style="font-size:52px;margin-bottom:12px;">🗺️</div>
+    <p style="font-size:14px;color:#374151;margin-bottom:20px;">Pulsa el botón para ver qué lugares del itinerario tienes más cerca en este momento.</p>
+    <button onclick="getLocation()" style="
+      background:linear-gradient(135deg,#059669,#047857);
+      color:#fff;border:none;border-radius:12px;
+      padding:14px 28px;font-size:15px;font-weight:800;cursor:pointer;
+      box-shadow:0 4px 12px rgba(5,150,105,.3);">
+      📍 Ver lugares cercanos
+    </button>
+  </div>
+
+  <div id="nm-loading" style="display:none;text-align:center;padding:40px 16px;color:#6b7280;">
+    <div style="font-size:36px;margin-bottom:10px;">⏳</div>
+    <p>Obteniendo tu ubicación...</p>
+  </div>
+
+  <div id="nm-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;padding:14px;margin-bottom:14px;color:#991b1b;font-size:13px;"></div>
+
+  <div id="nm-results" style="display:none;">
+    <div id="nm-location-info" style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#166534;display:flex;justify-content:space-between;align-items:center;">
+      <span id="nm-loc-text">📍 Ubicación obtenida</span>
+      <button onclick="getLocation()" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">🔄 Actualizar</button>
+    </div>
+    <div id="nm-list"></div>
+  </div>
+</div>
+
+<script>
+var allPlaces = [
+  // ── JUEVES – Manchester ──
+  { name:'LEGO Store · Manchester Arndale',      cat:'🧱 Jueves',  lat:53.4836, lng:-2.2413, maps:'https://www.google.com/maps/search/LEGO+Store+Manchester+Arndale' },
+  { name:'Afflecks Palace',                       cat:'🧱 Jueves',  lat:53.4833, lng:-2.2357, maps:'https://www.google.com/maps/search/Afflecks+Manchester' },
+  { name:'Shambles Square',                       cat:'🏛️ Jueves', lat:53.4847, lng:-2.2451, maps:'https://www.google.com/maps/search/Shambles+Square+Manchester' },
+  { name:'Catedral de Mánchester',                cat:'🏛️ Jueves', lat:53.4849, lng:-2.2445, maps:'https://www.google.com/maps/search/Manchester+Cathedral' },
+  { name:'Printworks',                            cat:'🏛️ Jueves', lat:53.4847, lng:-2.2430, maps:'https://www.google.com/maps/search/Printworks+Manchester' },
+  { name:'Manchester Central Library',            cat:'🏛️ Jueves', lat:53.4792, lng:-2.2451, maps:'https://www.google.com/maps/search/Manchester+Central+Library' },
+  // ── VIERNES – Liverpool ──
+  { name:'The Three Graces · Pier Head',          cat:'🌊 Viernes', lat:53.4063, lng:-2.9970, maps:'https://www.google.com/maps/search/Royal+Liver+Building+Liverpool' },
+  { name:'Estatua de The Beatles',                cat:'🎸 Viernes', lat:53.4062, lng:-2.9979, maps:'https://www.google.com/maps/search/Beatles+Statue+Liverpool' },
+  { name:'The Beatles Story',                     cat:'🎸 Viernes', lat:53.4006, lng:-2.9932, maps:'https://www.google.com/maps/search/The+Beatles+Story+Liverpool' },
+  { name:'Royal Albert Dock',                     cat:'🌊 Viernes', lat:53.4006, lng:-2.9930, maps:'https://www.google.com/maps/search/Royal+Albert+Dock+Liverpool' },
+  { name:'Museum of Liverpool',                   cat:'🌊 Viernes', lat:53.4063, lng:-2.9978, maps:'https://www.google.com/maps/search/Museum+of+Liverpool' },
+  { name:'Barrio Chino de Liverpool',             cat:'🌊 Viernes', lat:53.3994, lng:-2.9780, maps:'https://www.google.com/maps/search/Chinatown+Liverpool' },
+  { name:'Catedral Metropolitana Católica',       cat:'🌊 Viernes', lat:53.4031, lng:-2.9681, maps:'https://www.google.com/maps/search/Liverpool+Metropolitan+Cathedral' },
+  { name:'Catedral Anglicana de Liverpool',       cat:'🌊 Viernes', lat:53.3994, lng:-2.9729, maps:'https://www.google.com/maps/search/Liverpool+Cathedral' },
+  { name:'LEGO Store · Liverpool ONE',            cat:'🧱 Viernes', lat:53.4033, lng:-2.9870, maps:'https://www.google.com/maps/search/LEGO+Store+Liverpool+ONE' },
+  { name:'The Cavern Club · Mathew Street',       cat:'🎸 Viernes', lat:53.4070, lng:-2.9916, maps:'https://www.google.com/maps/search/Cavern+Club+Liverpool' },
+  // ── SÁBADO – Manchester ──
+  { name:'Estatua de Alan Turing',                cat:'💻 Sábado',  lat:53.4774, lng:-2.2356, maps:'https://www.google.com/maps/search/Alan+Turing+Memorial+Manchester' },
+  { name:'Campus Universidad de Mánchester',      cat:'💻 Sábado',  lat:53.4668, lng:-2.2339, maps:'https://www.google.com/maps/search/University+of+Manchester' },
+  { name:'Manchester Museum',                     cat:'💻 Sábado',  lat:53.4669, lng:-2.2338, maps:'https://www.google.com/maps/search/Manchester+Museum' },
+  { name:'The Whitworth',                         cat:'🎨 Sábado',  lat:53.4608, lng:-2.2317, maps:'https://www.google.com/maps/search/Whitworth+Art+Gallery+Manchester' },
+  { name:'Science & Industry Museum',             cat:'🚀 Sábado',  lat:53.4782, lng:-2.2540, maps:'https://www.google.com/maps/search/Science+and+Industry+Museum+Manchester' },
+  { name:'Castlefield · Fortaleza Romana',        cat:'🚀 Sábado',  lat:53.4754, lng:-2.2565, maps:'https://www.google.com/maps/search/Castlefield+Manchester' },
+  { name:'Torre Beetham & Great Northern',        cat:'🚀 Sábado',  lat:53.4754, lng:-2.2496, maps:'https://www.google.com/maps/search/Beetham+Tower+Manchester' },
+  { name:'People\'s History Museum',              cat:'🚀 Sábado',  lat:53.4800, lng:-2.2544, maps:'https://www.google.com/maps/search/Peoples+History+Museum+Manchester' },
+  { name:'John Rylands Library',                  cat:'🚀 Sábado',  lat:53.4818, lng:-2.2489, maps:'https://www.google.com/maps/search/John+Rylands+Library+Manchester' },
+  // ── DOMINGO – Manchester ──
+  { name:'Manchester Art Gallery',                cat:'🎨 Domingo', lat:53.4793, lng:-2.2426, maps:'https://www.google.com/maps/search/Manchester+Art+Gallery' },
+  { name:'Northern Quarter',                      cat:'🎨 Domingo', lat:53.4836, lng:-2.2357, maps:'https://www.google.com/maps/search/Northern+Quarter+Manchester' },
+  { name:'New Islington & Canales de Ancoats',    cat:'🎨 Domingo', lat:53.4820, lng:-2.2150, maps:'https://www.google.com/maps/search/New+Islington+Manchester' },
+  { name:'Co-op Live',                            cat:'🎤 Domingo', lat:53.4861, lng:-2.1999, maps:'https://www.google.com/maps/search/Co-op+Live+Manchester' },
+  { name:'Mackie Mayor',                          cat:'🍺 Domingo', lat:53.4848, lng:-2.2337, maps:'https://www.google.com/maps/search/Mackie+Mayor+Manchester' },
+  // ── PUBS ──
+  { name:'The Church · Canal Street',             cat:'🍺 Pubs',    lat:53.4774, lng:-2.2361, maps:'https://www.google.com/maps/search/The+Church+Canal+Street+Manchester' },
+  { name:'Via Manchester',                        cat:'🍺 Pubs',    lat:53.4772, lng:-2.2365, maps:'https://www.google.com/maps/search/Via+Manchester' },
+  { name:'G-A-Y Manchester',                      cat:'🍺 Pubs',    lat:53.4774, lng:-2.2378, maps:'https://www.google.com/maps/search/G-A-Y+Manchester' },
+  { name:'New York New York',                     cat:'🍺 Pubs',    lat:53.4769, lng:-2.2374, maps:'https://www.google.com/maps/search/New+York+New+York+Manchester+gay+bar' },
+  { name:'Thompson Arms',                         cat:'🍺 Pubs',    lat:53.4773, lng:-2.2358, maps:'https://www.google.com/maps/search/Thompson+Arms+Manchester' },
+  { name:'The Rembrandt (RemBar)',                 cat:'🍺 Pubs',    lat:53.4771, lng:-2.2354, maps:'https://www.google.com/maps/search/The+Rembrandt+Manchester' },
+  { name:'The Eagle Manchester',                  cat:'🍺 Pubs',    lat:53.4768, lng:-2.2374, maps:'https://www.google.com/maps/search/The+Eagle+Manchester+gay+bar' },
+  { name:'Cruz 101',                              cat:'🍺 Pubs',    lat:53.4769, lng:-2.2384, maps:'https://www.google.com/maps/search/Cruz+101+Manchester' },
+];
+
+function haversine(lat1, lng1, lat2, lng2) {
+  var R = 6371000;
+  var dLat = (lat2-lat1) * Math.PI/180;
+  var dLng = (lng2-lng1) * Math.PI/180;
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+          Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+          Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function fmtDist(m) {
+  if (m < 1000) return Math.round(m) + ' m';
+  return (m/1000).toFixed(1) + ' km';
+}
+
+function fmtWalk(m) {
+  var mins = Math.round(m / 80); // ~80m/min walking
+  if (mins < 1) return '< 1 min';
+  if (mins < 60) return mins + ' min a pie';
+  return Math.floor(mins/60) + 'h ' + (mins%60) + 'min a pie';
+}
+
+function renderPlaces(lat, lng) {
+  var sorted = allPlaces.map(function(p) {
+    var d = haversine(lat, lng, p.lat, p.lng);
+    return { p:p, d:d };
+  }).sort(function(a,b){ return a.d - b.d; });
+
+  var html = '';
+  sorted.forEach(function(item, i) {
+    var p = item.p;
+    var d = item.d;
+    var isClose = d < 300;
+    var bg = isClose ? '#f0fdf4' : (i%2===0?'#fff':'#f9fafb');
+    var border = isClose ? '1px solid #86efac' : '1px solid #f1f5f9';
+    html += '<div style="background:'+bg+';border:'+border+';border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">' +
+      '<div style="font-size:26px;flex-shrink:0;">' + (d<100?'🟢':d<500?'🟡':d<2000?'🟠':'⚪') + '</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-weight:800;font-size:13px;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.name + '</div>' +
+        '<div style="font-size:11px;color:#6b7280;margin-top:2px;">' + p.cat + '</div>' +
+        '<div style="font-size:12px;font-weight:700;color:#059669;margin-top:3px;">' + fmtDist(d) + ' · ' + fmtWalk(d) + '</div>' +
+      '</div>' +
+      '<a href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng+'&travelmode=walking" target="_blank" ' +
+        'style="background:#2563eb;color:#fff;border-radius:8px;padding:7px 11px;font-size:11px;font-weight:700;text-decoration:none;flex-shrink:0;">🗺️ Ir</a>' +
+    '</div>';
+  });
+  document.getElementById('nm-list').innerHTML = html;
+}
+
+function getLocation() {
+  document.getElementById('nm-ask').style.display    = 'none';
+  document.getElementById('nm-error').style.display  = 'none';
+  document.getElementById('nm-results').style.display = 'none';
+  document.getElementById('nm-loading').style.display = 'block';
+
+  if (!navigator.geolocation) {
+    showNmError('Tu navegador no soporta geolocalización.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      document.getElementById('nm-loading').style.display  = 'none';
+      document.getElementById('nm-results').style.display  = 'block';
+      document.getElementById('nm-loc-text').textContent =
+        '📍 ' + lat.toFixed(5) + ', ' + lng.toFixed(5) +
+        ' · ±' + Math.round(pos.coords.accuracy) + 'm';
+      renderPlaces(lat, lng);
+    },
+    function(err) {
+      var msg = {1:'Permiso denegado — activa la ubicación en el navegador.',
+                 2:'No se pudo obtener la ubicación. Prueba en exterior.',
+                 3:'Tiempo de espera agotado. Inténtalo de nuevo.'}[err.code] || 'Error desconocido.';
+      showNmError(msg);
+    },
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+  );
+}
+
+function showNmError(msg) {
+  document.getElementById('nm-loading').style.display = 'none';
+  document.getElementById('nm-ask').style.display     = 'block';
+  var el = document.getElementById('nm-error');
+  el.style.display = 'block';
+  el.textContent = '⚠️ ' + msg;
+}
+
+function initNearMe() {
+  // Auto-trigger on first open
+  if (document.getElementById('nm-results').style.display === 'none' &&
+      document.getElementById('nm-loading').style.display === 'none') {
+    // do nothing, let user press button
+  }
+}
+</script>
+
+</body>
+</html>
