@@ -17,6 +17,32 @@
     --pink: #db2777;
     --indigo: #4f46e5;
     --purple: #9333ea;
+    --card-alt: #f8fafc;
+    --food-desc: #6b7280;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #334155;
+      --card-alt: #273449;
+      --food-desc: #94a3b8;
+    }
+    .day-card, .food-block, .place-card, .pub-card { background: var(--card) !important; }
+    .food-header { background: var(--card-alt) !important; color: var(--text) !important; }
+    .food-item { border-color: var(--border) !important; }
+    .tabs-wrap { background: var(--card) !important; }
+    .tab-btn { color: var(--muted); }
+    th { background: var(--card-alt) !important; color: var(--muted) !important; }
+    td { color: var(--text) !important; }
+    .place-desc { color: var(--text) !important; }
+    .food-desc { color: var(--food-desc) !important; }
+    .info-card { background: linear-gradient(135deg, #1e3a5f, #1e40af) !important; border-color: #2563eb !important; color: #e2e8f0 !important; }
+    .info-card strong { color: #93c5fd !important; }
+    .food-name, .place-name, .pub-name, .transport-title { color: var(--text) !important; }
+    .place-tip { background: #14532d !important; color: #86efac !important; }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -67,6 +93,7 @@
   [data-tab="pubs"]     { --active-color: var(--purple); }
   [data-tab="cambio"]   { --active-color: #0369a1; }
   [data-tab="cercami"]  { --active-color: #059669; }
+  [data-tab="util"]     { --active-color: #0891b2; }
 
   /* ─── TAB PANELS ─── */
   .tab-panel { display: none; padding: 14px 12px 40px; }
@@ -367,6 +394,7 @@
     <button class="tab-btn"        data-tab="pubs"    onclick="openTab('pubs',this)">🍺 Pubs LGTBIQ+</button>
     <button class="tab-btn"        data-tab="cambio"  onclick="openTab('cambio',this)">💱 £ → €</button>
     <button class="tab-btn"        data-tab="cercami" onclick="openTab('cercami',this);initNearMe()">📍 Cerca de mí</button>
+    <button class="tab-btn"        data-tab="util"    onclick="openTab('util',this)">ℹ️ Útil</button>
   </div>
 </div>
 
@@ -1791,6 +1819,227 @@ window.addEventListener('load', function() {
   if (inp) inp.addEventListener('input', updateConversion);
   fetchRate();
   setInterval(fetchRate, 30 * 60 * 1000);
+});
+</script>
+
+<!-- ══════════════════════════════════
+     ÚTIL
+══════════════════════════════════ -->
+<div id="util" class="tab-panel">
+  <h2 class="day-heading" style="--day-color:#0891b2;">ℹ️ Información Útil</h2>
+
+  <!-- ── CLIMA ── -->
+  <div class="section-label">🌦️ El tiempo · 3–7 Sep</div>
+  <div style="display:flex;gap:10px;margin-bottom:8px;">
+    <div id="weather-man" style="flex:1;background:linear-gradient(135deg,#0369a1,#0891b2);border-radius:14px;padding:14px;color:#fff;">
+      <div style="font-weight:800;font-size:13px;margin-bottom:8px;">🏙️ Mánchester</div>
+      <div id="weather-man-body" style="font-size:12px;opacity:.8;">Cargando...</div>
+    </div>
+    <div id="weather-liv" style="flex:1;background:linear-gradient(135deg,#7c3aed,#9333ea);border-radius:14px;padding:14px;color:#fff;">
+      <div style="font-weight:800;font-size:13px;margin-bottom:8px;">🌊 Liverpool</div>
+      <div id="weather-liv-body" style="font-size:12px;opacity:.8;">Cargando...</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:var(--muted);margin-bottom:16px;text-align:center;">Previsión de Open-Meteo · se actualiza al abrir</p>
+
+  <!-- ── ENCHUFES ── -->
+  <div class="section-label">🔌 Enchufes & Electricidad</div>
+  <div class="day-card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="font-size:44px;">🔌</div>
+      <div style="flex:1;font-size:13px;">
+        <p style="margin-bottom:6px;"><strong>Reino Unido usa el enchufe Tipo G</strong> — tres clavijas rectangulares, distinto al europeo.</p>
+        <p style="color:var(--muted);">Necesitas un <strong>adaptador UK</strong> para cargar móviles y cualquier aparato. El voltaje es 230V (igual que España), así que no necesitas transformador, solo el adaptador de clavija.</p>
+      </div>
+    </div>
+    <div class="place-tip" style="margin-top:12px;margin-bottom:0;">💡 Compra 2-3 adaptadores antes de viajar (en el aeropuerto cuestan el triple). Los hoteles a veces prestan pero no cuentes con ello.</div>
+  </div>
+
+  <!-- ── TRANSPORTE ── -->
+  <div class="section-label">🚇 Transporte en Mánchester</div>
+  <div class="day-card" style="margin-bottom:10px;">
+    <div style="font-weight:800;font-size:14px;margin-bottom:8px;color:var(--text);">🚊 Metrolink (tranvía)</div>
+    <p style="font-size:13px;color:var(--text);margin-bottom:8px;">La red de tranvía de Mánchester. Lo usaréis para ir al concierto (parada <strong>Etihad Campus</strong>). Compra billetes en las máquinas de cada parada o con la app <strong>Bee Network</strong>.</p>
+    <div style="background:var(--card-alt);border-radius:8px;padding:10px;font-size:12px;color:var(--text);">
+      💳 <strong>Contactless:</strong> pasa la tarjeta bancaria al entrar y salir — te aplica automáticamente la mejor tarifa del día (tope diario). No necesitas comprar billete.
+    </div>
+  </div>
+  <div class="day-card" style="margin-bottom:14px;">
+    <div style="font-weight:800;font-size:14px;margin-bottom:8px;color:var(--text);">🚌 Autobús Bee Network</div>
+    <p style="font-size:13px;color:var(--text);margin-bottom:0;">Autobuses amarillos con tarifa plana de <strong>£2 por trayecto</strong>. También con contactless. La mayoría de vuestro itinerario es andando, pero útil si os cansáis.</p>
+  </div>
+
+  <div class="section-label">🚆 Trenes Mánchester ↔ Liverpool</div>
+  <div class="day-card" style="margin-bottom:14px;">
+    <p style="font-size:13px;color:var(--text);margin-bottom:8px;">Salen de <strong>Manchester Piccadilly</strong> hacia <strong>Liverpool Lime Street</strong>. Duración ~45 min, muy frecuentes.</p>
+    <div style="background:var(--card-alt);border-radius:8px;padding:10px;font-size:12px;color:var(--text);margin-bottom:8px;">
+      🎫 Compra los billetes con antelación en <strong>trainline.com</strong> o <strong>nationalrail.co.uk</strong> — más barato que en taquilla el mismo día (~£10-15 ida).
+    </div>
+    <a href="https://www.thetrainline.com" target="_blank" class="btn-maps" style="display:inline-block;">🎫 Trainline</a>
+  </div>
+
+  <!-- ── FRASES ── -->
+  <div class="section-label">🗣️ Frases útiles en inglés</div>
+  <div class="day-card" style="margin-bottom:14px;padding:0;overflow:hidden;">
+    <div id="phrases-list"></div>
+  </div>
+
+  <!-- ── CHECKLIST ── -->
+  <div class="section-label">🧳 Checklist de maleta</div>
+  <div class="day-card" style="margin-bottom:14px;">
+    <div id="checklist"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <span id="checklist-progress" style="font-size:12px;color:var(--muted);font-weight:700;">0 / 0</span>
+      <button onclick="resetChecklist()" style="background:var(--card-alt);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;">↺ Reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CLIMA ──
+function loadWeather() {
+  var cities = [
+    { id:'man', lat:53.48, lng:-2.24, name:'Manchester' },
+    { id:'liv', lat:53.41, lng:-2.98, name:'Liverpool' }
+  ];
+  var wmoIcons = {
+    0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',
+    51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',
+    71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'
+  };
+  var dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  cities.forEach(function(c) {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lng+
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'+
+      '&timezone=Europe/London&start_date=2026-09-03&end_date=2026-09-07';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.timeout = 8000;
+    xhr.onload = function() {
+      if (xhr.status !== 200) { failWeather(c.id); return; }
+      try {
+        var d = JSON.parse(xhr.responseText);
+        var days = d.daily.time;
+        var html = '';
+        for (var i=0; i<days.length; i++) {
+          var dt = new Date(days[i]);
+          var icon = wmoIcons[d.daily.weather_code[i]] || '🌡️';
+          var max = Math.round(d.daily.temperature_2m_max[i]);
+          var min = Math.round(d.daily.temperature_2m_min[i]);
+          var rain = d.daily.precipitation_probability_max[i];
+          html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.15);">' +
+            '<span style="font-weight:700;width:34px;">'+dayNames[dt.getDay()]+'</span>' +
+            '<span style="font-size:16px;">'+icon+'</span>' +
+            '<span style="font-weight:700;">'+max+'° <span style="opacity:.6;">'+min+'°</span></span>' +
+            '<span style="font-size:10px;opacity:.75;">💧'+rain+'%</span>' +
+          '</div>';
+        }
+        document.getElementById('weather-'+c.id+'-body').innerHTML = html;
+      } catch(e) { failWeather(c.id); }
+    };
+    xhr.onerror = function(){ failWeather(c.id); };
+    xhr.ontimeout = function(){ failWeather(c.id); };
+    xhr.send();
+  });
+}
+function failWeather(id) {
+  var el = document.getElementById('weather-'+id+'-body');
+  if (el) el.innerHTML = '<span style="opacity:.7;">Sin conexión — abre con internet</span>';
+}
+
+// ── FRASES ──
+var phrases = [
+  { es:'Una pinta, por favor', en:'A pint, please', ipa:'ə paɪnt pliːz' },
+  { es:'¿Cuánto cuesta?', en:'How much is it?', ipa:'haʊ mʌtʃ ɪz ɪt' },
+  { es:'¿Aceptáis tarjeta?', en:'Do you take card?', ipa:'duː juː teɪk kɑːd' },
+  { es:'La cuenta, por favor', en:'The bill, please', ipa:'ðə bɪl pliːz' },
+  { es:'¿Dónde está el baño?', en:'Where\'s the toilet?', ipa:'wɛəz ðə ˈtɔɪlət' },
+  { es:'Sin carne / soy vegetariano', en:'No meat / I\'m vegetarian', ipa:'nəʊ miːt / aɪm ˌvɛdʒəˈtɛəriən' },
+  { es:'¿Puede ayudarme?', en:'Can you help me?', ipa:'kæn juː hɛlp miː' },
+  { es:'No hablo inglés muy bien', en:'I don\'t speak English very well', ipa:'aɪ dəʊnt spiːk ˈɪŋglɪʃ ˈvɛri wɛl' },
+  { es:'¿Habla español?', en:'Do you speak Spanish?', ipa:'duː juː spiːk ˈspænɪʃ' },
+  { es:'Perdone / disculpe', en:'Excuse me', ipa:'ɪksˈkjuːz miː' },
+  { es:'Gracias / muchas gracias', en:'Thanks / cheers', ipa:'θæŋks / tʃɪəz' },
+  { es:'¿Para ir a…?', en:'How do I get to…?', ipa:'haʊ duː aɪ gɛt tuː' },
+  { es:'Dos cervezas, por favor', en:'Two beers, please', ipa:'tuː bɪəz pliːz' },
+  { es:'¿Está lejos?', en:'Is it far?', ipa:'ɪz ɪt fɑː' },
+];
+function renderPhrases() {
+  var html = '';
+  phrases.forEach(function(p, i) {
+    html += '<div style="padding:11px 14px;border-bottom:1px solid var(--border);'+(i%2===1?'background:var(--card-alt);':'')+'">' +
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:2px;">'+p.es+'</div>' +
+      '<div style="font-size:15px;font-weight:800;color:var(--text);">'+p.en+'</div>' +
+      '<div style="font-size:11px;color:#0891b2;font-style:italic;">/'+p.ipa+'/</div>' +
+    '</div>';
+  });
+  document.getElementById('phrases-list').innerHTML = html;
+}
+
+// ── CHECKLIST ──
+var checklistItems = [
+  { txt:'🛂 Pasaporte', key:'pasaporte' },
+  { txt:'🧱 Pasaporte LEGO', key:'pasaporte-lego' },
+  { txt:'🎫 Tarjetas de embarque (ida y vuelta)', key:'boarding' },
+  { txt:'🎤 Entradas concierto KATSEYE', key:'katseye' },
+  { txt:'🔌 Adaptadores de enchufe UK (x2-3)', key:'adaptador' },
+  { txt:'💳 Tarjetas bancarias (contactless)', key:'tarjetas' },
+  { txt:'💷 Algo de efectivo en libras', key:'efectivo' },
+  { txt:'📱 Cargador + batería externa', key:'cargador' },
+  { txt:'☂️ Paraguas / chubasquero (¡es Mánchester!)', key:'paraguas' },
+  { txt:'🧥 Chaqueta / capas de ropa', key:'chaqueta' },
+  { txt:'👟 Zapatillas cómodas para andar', key:'zapatillas' },
+  { txt:'💊 Medicación personal', key:'medicacion' },
+  { txt:'🪥 Neceser', key:'neceser' },
+  { txt:'🕶️ Gafas de sol', key:'gafas' },
+];
+function loadChecklistState() {
+  try { return JSON.parse(sessionStorage.getItem('ml_checklist') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveChecklistState(state) {
+  try { sessionStorage.setItem('ml_checklist', JSON.stringify(state)); } catch(e){}
+}
+function renderChecklist() {
+  var state = loadChecklistState();
+  var html = '';
+  checklistItems.forEach(function(item) {
+    var checked = state[item.key] ? 'checked' : '';
+    var style = state[item.key] ? 'opacity:.5;text-decoration:line-through;' : '';
+    html += '<label style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;'+style+'">' +
+      '<input type="checkbox" '+checked+' onchange="toggleCheck(\''+item.key+'\')" ' +
+        'style="width:22px;height:22px;accent-color:#0891b2;flex-shrink:0;">' +
+      '<span style="font-size:14px;font-weight:600;color:var(--text);">'+item.txt+'</span>' +
+    '</label>';
+  });
+  document.getElementById('checklist').innerHTML = html;
+  updateProgress();
+}
+function toggleCheck(key) {
+  var state = loadChecklistState();
+  state[key] = !state[key];
+  saveChecklistState(state);
+  renderChecklist();
+}
+function resetChecklist() {
+  saveChecklistState({});
+  renderChecklist();
+}
+function updateProgress() {
+  var state = loadChecklistState();
+  var done = checklistItems.filter(function(i){ return state[i.key]; }).length;
+  var el = document.getElementById('checklist-progress');
+  if (el) el.textContent = done + ' / ' + checklistItems.length + ' preparado';
+}
+window.toggleCheck = toggleCheck;
+window.resetChecklist = resetChecklist;
+
+// Init all on load
+window.addEventListener('load', function() {
+  loadWeather();
+  renderPhrases();
+  renderChecklist();
 });
 </script>
 
