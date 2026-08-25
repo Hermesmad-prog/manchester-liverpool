@@ -54,10 +54,14 @@
   /* ─── HEADER ─── */
   .app-header {
     background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
-    color: #fff; text-align: center; padding: 18px 16px 14px;
+    color: #fff; text-align: center; padding: 14px 16px 14px;
     position: relative;
   }
-  .app-header h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.3px; }
+  .header-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .app-header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; }
   .app-header p  { font-size: 14px; opacity: .8; margin-top: 3px; }
   .flight-bar {
     display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
@@ -70,20 +74,17 @@
 
   /* ─── HAMBURGER BUTTON ─── */
   .hamburger {
-    position: absolute; top: 16px; left: 14px;
-    width: 44px; height: 44px; border-radius: 12px;
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
     background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
     color: #fff; font-size: 22px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    z-index: 10;
   }
   /* current day label shown next to hamburger */
   .current-tab-label {
-    position: absolute; top: 16px; right: 14px;
     background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
     border-radius: 12px; padding: 0 14px; height: 44px;
     display: flex; align-items: center; color: #fff;
-    font-size: 13px; font-weight: 700; max-width: 55%;
+    font-size: 13px; font-weight: 700; max-width: 60%;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
@@ -431,8 +432,10 @@
   }
 })();
 </script>
-  <button class="hamburger" onclick="openDrawer()">☰</button>
-  <div class="current-tab-label" id="current-tab-label">Jue 3 Sep</div>
+  <div class="header-topbar">
+    <button class="hamburger" onclick="openDrawer()">☰</button>
+    <div class="current-tab-label" id="current-tab-label">Jue 3 Sep</div>
+  </div>
   <h1>🇬🇧 Mánchester & Liverpool</h1>
   <p>Guía completa · 3 – 7 Septiembre 2026</p>
   <div class="flight-bar">
@@ -2457,6 +2460,10 @@ function initNearMe() {
   }
 }
 </script>
+
+<div style="text-align:center;padding:20px 16px 30px;color:var(--muted);font-size:12px;">
+  Guía Mánchester &amp; Liverpool · v5.2
+</div>
 
 </body>
 </html>
