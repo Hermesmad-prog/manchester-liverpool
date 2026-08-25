@@ -278,7 +278,76 @@
 </head>
 <body>
 
-<div class="app-header">
+<style>
+#lock-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 30px;
+}
+#lock-screen h2 {
+  color: #fff; font-size: 22px; font-weight: 900;
+  text-align: center; margin-bottom: 6px;
+}
+#lock-screen p {
+  color: rgba(255,255,255,.7); font-size: 13px;
+  text-align: center; margin-bottom: 28px;
+}
+#lock-input {
+  width: 100%; padding: 14px 16px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.3); background: rgba(255,255,255,.15);
+  color: #fff; font-size: 20px; font-weight: 700; text-align: center;
+  outline: none; letter-spacing: 4px; margin-bottom: 14px;
+  box-sizing: border-box;
+}
+#lock-input::placeholder { color: rgba(255,255,255,.4); letter-spacing: 2px; }
+#lock-btn {
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  background: #fff; color: #1e40af; font-size: 16px; font-weight: 800;
+  cursor: pointer;
+}
+#lock-error {
+  color: #fca5a5; font-size: 13px; margin-top: 10px;
+  text-align: center; display: none;
+}
+</style>
+
+<div id="lock-screen">
+  <div style="font-size:56px;margin-bottom:16px;">🇬🇧</div>
+  <h2>Mánchester & Liverpool</h2>
+  <p>Introduce la contraseña para acceder a la guía</p>
+  <input id="lock-input" type="password" placeholder="••••••••" maxlength="20"
+    onkeydown="if(event.key==='Enter')checkPass()">
+  <button id="lock-btn" onclick="checkPass()">Entrar →</button>
+  <div id="lock-error">❌ Contraseña incorrecta</div>
+</div>
+
+<script>
+(function() {
+  var PASS = 'manchester2026';
+  var KEY  = 'ml_auth';
+
+  function checkPass() {
+    var val = document.getElementById('lock-input').value;
+    if (val === PASS) {
+      sessionStorage.setItem(KEY, '1');
+      document.getElementById('lock-screen').style.display = 'none';
+    } else {
+      var err = document.getElementById('lock-error');
+      err.style.display = 'block';
+      document.getElementById('lock-input').value = '';
+      setTimeout(function(){ err.style.display = 'none'; }, 2000);
+    }
+  }
+  window.checkPass = checkPass;
+
+  // If already authenticated in this session, skip lock
+  if (sessionStorage.getItem(KEY) === '1') {
+    document.getElementById('lock-screen').style.display = 'none';
+  }
+})();
+</script>
   <h1>🇬🇧 Mánchester & Liverpool</h1>
   <p>Guía completa · 3 – 7 Septiembre 2026</p>
   <div class="flight-bar">
